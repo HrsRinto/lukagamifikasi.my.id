@@ -2,7 +2,11 @@
 
 use Illuminate\Http\Request;
 
-// 1. Siapkan folder temporary di RAM Vercel agar tidak Read-Only Error
+// 1. Definisikan path storage ke /tmp SEBELUM Laravel dimuat
+putenv('APP_STORAGE=/tmp/storage');
+$_ENV['APP_STORAGE'] = '/tmp/storage';
+
+// 2. Siapkan folder temporary di RAM Vercel
 $storageDirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache',
@@ -16,15 +20,12 @@ foreach ($storageDirs as $dir) {
     }
 }
 
-// 2. Load Laravel secara manual
+// 3. Load Laravel
 require __DIR__ . '/../vendor/autoload.php';
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// 3. PAKSA SEMUA PATH KE /tmp SECARA TOTAL
+// 4. Paksa Laravel menggunakan path baru
 $app->useStoragePath('/tmp/storage');
-$app->bind('path.public', function() {
-    return __DIR__ . '/../public';
-});
 
-// 4. Jalankan aplikasi
+// 5. Jalankan aplikasi
 $app->handleRequest(Request::capture());
