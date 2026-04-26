@@ -26,7 +26,7 @@
                     
                     <div class="flex items-center justify-center gap-6 mb-6">
                         <div class="bg-white p-3 rounded-xl shadow-sm h-24 w-24 flex items-center justify-center">
-                            <img src="{{ asset('images/logo_kampus.png') }}" 
+                            <img src="{{ asset('img/logo_stikom.png') }}" 
                                  alt="Logo STIKOM" 
                                  class="max-h-full max-w-full object-contain"
                                  onerror="this.src='https://ui-avatars.com/api/?name=STIKOM&background=random&color=fff'">
@@ -35,7 +35,7 @@
                         <span class="text-gray-400 font-bold text-xl">X</span>
 
                         <div class="bg-white p-3 rounded-xl shadow-sm h-24 w-24 flex items-center justify-center">
-                            <img src="{{ asset('images/logo_sekolah.png') }}" 
+                            <img src="{{ asset('img/logo_sekolah.png') }}" 
                                  alt="Logo Sekolah" 
                                  class="max-h-full max-w-full object-contain"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Sekolah&background=random&color=fff'">
