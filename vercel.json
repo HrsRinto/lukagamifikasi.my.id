@@ -20,6 +20,10 @@
     },
     "routes": [
         {
+            "src": "/build/(.*)",
+            "dest": "public/build/$1"
+        },
+        {
             "src": "/(css|js|img|images|fonts|icons)/(.*)",
             "dest": "public/$1/$2"
         },
