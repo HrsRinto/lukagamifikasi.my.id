@@ -26,13 +26,5 @@ $app->bind('path.public', function() {
     return __DIR__ . '/../public';
 });
 
-// Override konfigurasi runtime agar tidak mencoba menulis ke folder terlarang
-config([
-    'view.compiled' => '/tmp/storage/framework/views',
-    'cache.stores.file.path' => '/tmp/storage/framework/cache',
-    'session.driver' => 'cookie',
-    'logging.channels.stderr.path' => 'php://stderr',
-]);
-
 // 4. Jalankan aplikasi
 $app->handleRequest(Request::capture());
