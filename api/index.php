@@ -1,6 +1,8 @@
 <?php
 
-// 1. Siapkan folder temporary untuk Laravel di Vercel (karena Read-Only)
+use Illuminate\Http\Request;
+
+// 1. Siapkan folder temporary
 $storageDirs = [
     "/tmp/storage/framework/views",
     "/tmp/storage/framework/cache",
@@ -14,12 +16,12 @@ foreach ($storageDirs as $dir) {
     }
 }
 
-// 2. Arahkan cache Laravel ke folder /tmp
-putenv("APP_STORAGE=/tmp");
-putenv("APP_CONFIG_CACHE=/tmp/config.php");
-putenv("APP_ROUTES_CACHE=/tmp/routes.php");
-putenv("APP_SERVICES_CACHE=/tmp/services.php");
-putenv("APP_PACKAGES_CACHE=/tmp/packages.php");
+// 2. Load Laravel secara manual agar bisa kita paksa pindah folder
+require __DIR__ . "/../vendor/autoload.php";
+$app = require_once __DIR__ . "/../bootstrap/app.php";
 
-// 3. Jalankan aplikasi
-require __DIR__ . "/../public/index.php";
+// 3. PAKSA Laravel menggunakan folder /tmp untuk menulis file
+$app->useStoragePath("/tmp/storage");
+
+// 4. Jalankan aplikasi
+$app->handleRequest(Request::capture());
