@@ -1,0 +1,194 @@
+<x-app-layout>
+
+    {{-- PERBAIKAN UTAMA: x-data membungkus SAMPAI BAWAH (termasuk modal) --}}
+    <div class="py-8 bg-gray-50 min-h-screen" x-data="{ openCreateModal: false }">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            
+            {{-- HEADER SECTION --}}
+            <div class="relative bg-gradient-to-r from-slate-800 to-slate-900 rounded-3xl p-10 text-white shadow-2xl overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/50 text-yellow-300 text-xs font-bold mb-4">
+                            <span>👑</span> Fitur Motivasi Siswa
+                        </div>
+                        <h1 class="text-4xl font-black mb-2 tracking-tight">Manajemen Bursa</h1>
+                        <p class="text-slate-300 text-lg max-w-2xl font-light">
+                            Atur "barang dagangan" (privilese ujian) yang bisa dibeli siswa dengan XP mereka.
+                        </p>
+                    </div>
+                    
+                    {{-- TOMBOL PEMICU MODAL --}}
+                    {{-- Pastikan type="button" agar tidak submit form --}}
+                    <button @click="openCreateModal = true" type="button" class="group bg-yellow-500 text-slate-900 px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-yellow-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2 cursor-pointer">
+                        <span>+ Tambah Barang Baru</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- ALERT NOTIFIKASI --}}
+            @if(session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <div>
+                        <p class="font-bold">Berhasil!</p>
+                        <p>{{ session('success') }}</p>
+                    </div>
+                </div>
+            @endif
+
+            {{-- LIST BARANG --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @forelse($items as $item)
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
+                        
+                        <div class="p-6 flex-1">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="bg-blue-100 text-blue-700 font-black px-3 py-1 rounded-lg text-sm">
+                                    {{ $item->price }} XP
+                                </div>
+                                <div class="{{ $item->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} font-bold px-3 py-1 rounded-full text-xs">
+                                    Stok: {{ $item->stock }}
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition">{{ $item->name }}</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed">
+                                {{ $item->description }}
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center">
+                            <span class="text-xs text-gray-400 font-mono">ID: #{{ $item->id }}</span>
+                            
+                            <form action="{{ route('shop-guru.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus barang ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-bold hover:underline">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-3 text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-300">
+                        <p class="text-gray-400 text-lg font-medium">Belum ada barang yang dijual.</p>
+                        <p class="text-gray-300 text-sm">Klik tombol Tambah di atas untuk mulai.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- TABEL RIWAYAT TRANSAKSI --}}
+            <div class="mt-12 bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                        <span>📜</span> Riwayat Penukaran Siswa
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                                <th class="px-8 py-4 font-bold">Waktu</th>
+                                <th class="px-6 py-4 font-bold">Nama Siswa</th>
+                                <th class="px-6 py-4 font-bold">Barang Dibeli</th>
+                                <th class="px-6 py-4 font-bold text-right">Harga (XP)</th>
+                                <th class="px-8 py-4 font-bold text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @if(isset($transactions))
+                                @forelse($transactions as $trx)
+                                    <tr class="hover:bg-blue-50/50 transition-colors">
+                                        <td class="px-8 py-4 text-sm text-gray-500">
+                                            {{ $trx->created_at->format('d M Y, H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="font-bold text-gray-800">{{ $trx->user->name ?? 'Siswa Terhapus' }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-700">
+                                            {{ $trx->item->name ?? 'Barang Terhapus' }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">
+                                                -{{ $trx->price_at_purchase }} XP
+                                            </span>
+                                        </td>
+                                        <td class="px-8 py-4 text-center">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                ✅ Berhasil
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-8 py-12 text-center text-gray-400">
+                                            Belum ada siswa yang melakukan pembelian.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- MODAL FORM TAMBAH BARANG --}}
+        {{-- (Sekarang berada DI DALAM div utama x-data, jadi pasti terbaca) --}}
+        <div x-show="openCreateModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             style="display: none;">
+            
+            {{-- Backdrop --}}
+            <div class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm" @click="openCreateModal = false"></div>
+            
+            {{-- Panel Modal --}}
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 transform transition-all">
+                    
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800">Tambah Barang Baru</h3>
+                        <button @click="openCreateModal = false" type="button" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('shop-guru.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Nama Barang</label>
+                                <input type="text" name="name" required class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Contoh: Voucher Diskon Soal">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Harga (XP)</label>
+                                    <input type="number" name="price" required class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" placeholder="30">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Stok Awal</label>
+                                    <input type="number" name="stock" required class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" placeholder="5">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Deskripsi Manfaat</label>
+                                <textarea name="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" placeholder="Jelaskan keuntungan siswa..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex justify-end gap-3">
+                            <button type="button" @click="openCreateModal = false" class="px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded-lg">Batal</button>
+                            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-lg">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div> {{-- Penutup Div Utama yang membawa x-data --}}
+
+</x-app-layout>
