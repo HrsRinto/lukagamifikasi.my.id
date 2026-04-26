@@ -1,5 +1,10 @@
 {
     "version": 2,
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.7.1"
+        }
+    },
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
@@ -9,12 +14,6 @@
         "CACHE_STORE": "file",
         "DB_CONNECTION": "mysql"
     },
-    "builds": [
-        {
-            "src": "api/index.php",
-            "use": "@vercel/php"
-        }
-    ],
     "routes": [
         {
             "src": "/(css|js|img|images|fonts|icons)/(.*)",
