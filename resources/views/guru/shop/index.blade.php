@@ -104,10 +104,10 @@
                                             {{ $trx->created_at->format('d M Y, H:i') }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="font-bold text-gray-800">{{ $trx->user->name ?? 'Siswa Terhapus' }}</span>
+                                            <span class="font-bold text-gray-800">{{ $trx->user?->name ?? 'Siswa Terhapus' }}</span>
                                         </td>
                                         <td class="px-6 py-4 text-sm font-medium text-gray-700">
-                                            {{ $trx->item->name ?? 'Barang Terhapus' }}
+                                            {{ $trx->item?->name ?? 'Barang Terhapus' }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">

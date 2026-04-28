@@ -36,11 +36,16 @@ Route::get('/dashboard', function () {
     if ($role === 'admin') {
         return view('dashboard');
     } elseif ($role === 'guru') {
-        return view('guru.dashboard');
+        return redirect()->route('guru.dashboard');
     } else {
         return redirect()->route('siswa.dashboard');
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route khusus Dashboard Guru (dengan Controller)
+Route::get('/guru/dashboard', [GuruController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('guru.dashboard');
 
 // GROUP MIDDLEWARE (Hanya user login yang bisa akses ini)
 Route::middleware('auth')->group(function () {

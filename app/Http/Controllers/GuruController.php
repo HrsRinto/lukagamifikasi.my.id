@@ -8,6 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class GuruController extends Controller
 {
+    /**
+     * Tampilkan Dashboard Guru dengan Statistik
+     */
+    public function dashboard()
+    {
+        $stats = [
+            'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+            'total_materi' => \App\Models\Materi::count(),
+            'total_soal' => \App\Models\Soal::count(),
+        ];
+
+        return view('guru.dashboard', compact('stats'));
+    }
+
     // 1. MENAMPILKAN DAFTAR GURU
     public function index()
     {

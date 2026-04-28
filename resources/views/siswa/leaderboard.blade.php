@@ -81,7 +81,7 @@
                             <div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-b from-gray-300 to-gray-600 shadow-2xl relative z-10">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-2 border-gray-400">
                                     @if($leaderboard[1]->profile_photo_path)
-                                        <img src="{{ asset('storage/' . $leaderboard[1]->profile_photo_path) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                                        <img src="{{ $leaderboard[1]->profile_photo_path ? asset('storage/' . $leaderboard[1]->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($leaderboard[1]->name).'&background=gray' }}" class="w-full h-full object-cover" alt="Foto Profil">
                                     @else
                                         <span class="text-2xl font-bold text-gray-300">{{ strtoupper(substr($leaderboard[1]->name, 0, 2)) }}</span>
                                     @endif
@@ -117,7 +117,7 @@
                             <div class="w-28 h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-700 shadow-2xl relative z-10 transform group-hover:scale-105 transition-transform duration-300">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-4 border-yellow-600">
                                     @if($leaderboard[0]->profile_photo_path)
-                                        <img src="{{ asset('storage/' . $leaderboard[0]->profile_photo_path) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                                        <img src="{{ $leaderboard[0]->profile_photo_path ? asset('storage/' . $leaderboard[0]->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($leaderboard[0]->name).'&background=yellow' }}" class="w-full h-full object-cover" alt="Foto Profil">
                                     @else
                                         <span class="text-4xl font-bold text-yellow-400">{{ strtoupper(substr($leaderboard[0]->name, 0, 2)) }}</span>
                                     @endif
@@ -149,7 +149,7 @@
                             <div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-b from-orange-300 to-orange-800 shadow-2xl relative z-10">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-2 border-orange-700">
                                     @if($leaderboard[2]->profile_photo_path)
-                                        <img src="{{ asset('storage/' . $leaderboard[2]->profile_photo_path) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                                        <img src="{{ $leaderboard[2]->profile_photo_path ? asset('storage/' . $leaderboard[2]->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($leaderboard[2]->name).'&background=orange' }}" class="w-full h-full object-cover" alt="Foto Profil">
                                     @else
                                         <span class="text-2xl font-bold text-orange-400">{{ strtoupper(substr($leaderboard[2]->name, 0, 2)) }}</span>
                                     @endif
@@ -189,7 +189,7 @@
                                 <div class="relative flex-shrink-0">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-gray-200 group-hover:border-cyan-400 transition-colors">
                                         @if($s->profile_photo_path)
-                                            <img src="{{ asset('storage/' . $s->profile_photo_path) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                                            <img src="{{ $s->profile_photo_path ? asset('storage/' . $s->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($s->name).'&background=random&color=fff' }}" class="w-full h-full object-cover" alt="Foto Profil">
                                         @else
                                             <span class="text-slate-500 font-bold text-lg">{{ strtoupper(substr($s->name, 0, 2)) }}</span>
                                         @endif

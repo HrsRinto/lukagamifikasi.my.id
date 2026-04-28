@@ -17,7 +17,18 @@ class RaidController extends Controller
 
     // 1. Dashboard Utama Guru
     public function indexGuru() {
-        $event = RaidEvent::first(); // Asumsi cuma ada 1 event raid
+        $event = RaidEvent::first(); 
+
+        // AUTO-CREATE: Jika belum ada event sama sekali, buat 1 default agar tidak error 500
+        if (!$event) {
+            $event = RaidEvent::create([
+                'mafia_name' => 'Don Corleone',
+                'total_hp' => 100,
+                'current_hp' => 100,
+                'status' => 'closed'
+            ]);
+        }
+
         $bankSoalKuis = Soal::with('materi')->get();
 
         // Ambil semua soal dari Bank Kuis (Tabel 'soals') untuk fitur Import
@@ -107,20 +118,20 @@ class RaidController extends Controller
     // 8. API Data Monitor
     public function getMonitorData() {
         $event = RaidEvent::first();
+        if (!$event) return response()->json(['status' => 'closed', 'participants' => []]);
 
         $participants = RaidParticipant::where('raid_event_id', $event->id)
-                        ->with('user')
+                        ->with(['user:id,name,profile_photo_path']) // Eager load only needed columns
                         ->orderBy('damage_dealt', 'desc')
                         ->get();
 
-        // Tambahkan logic Foto Profil
-        foreach($participants as $p) {
-            if ($p->user->profile_photo_path) {
-                $p->user->photo_url = asset('storage/' . $p->user->profile_photo_path);
-            } else {
-                $p->user->photo_url = 'https://ui-avatars.com/api/?name=' . urlencode($p->user->name) . '&background=random&color=fff';
-            }
-        }
+        // Tambahkan logic Foto Profil (Lebih efisien)
+        $participants->transform(function($p) {
+            $p->user->photo_url = $p->user->profile_photo_path 
+                ? asset('storage/' . $p->user->profile_photo_path) 
+                : 'https://ui-avatars.com/api/?name=' . urlencode($p->user->name) . '&background=random&color=fff';
+            return $p;
+        });
 
         return response()->json([
             'current_hp' => $event->current_hp,
@@ -172,24 +183,22 @@ class RaidController extends Controller
     // 2. API Data Lobby Siswa
     public function getLobbyData() {
         $event = RaidEvent::first();
+        if (!$event) return response()->json(['status' => 'closed', 'players' => []]);
+
         $players = RaidParticipant::where('raid_event_id', $event->id)
-                    ->with('user')
+                    ->with(['user:id,name,profile_photo_path'])
                     ->get();
 
-        // Tambahkan logic Foto Profil
-        foreach($players as $player) {
-            if ($player->user->profile_photo_path) {
-                // Foto dari storage (Uploadan User)
-                $player->user->photo_url = asset('storage/' . $player->user->profile_photo_path);
-            } else {
-                // Avatar Inisial (Default)
-                $player->user->photo_url = 'https://ui-avatars.com/api/?name=' . urlencode($player->user->name) . '&background=random&color=fff';
-            }
-        }
+        $players->transform(function($player) {
+            $player->user->photo_url = $player->user->profile_photo_path 
+                ? asset('storage/' . $player->user->profile_photo_path) 
+                : 'https://ui-avatars.com/api/?name=' . urlencode($player->user->name) . '&background=random&color=fff';
+            return $player;
+        });
 
         return response()->json([
             'status' => $event->status,
-            'current_hp' => $event->current_hp, // Kirim HP agar siswa bisa lihat darah boss
+            'current_hp' => $event->current_hp,
             'total_hp' => $event->total_hp,
             'players' => $players
         ]);

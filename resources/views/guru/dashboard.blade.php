@@ -54,7 +54,7 @@
                             <div>
                                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Siswa</p>
                                 <h4 class="text-3xl font-black text-slate-800 mt-1">
-                                    {{ \App\Models\User::where('role', 'siswa')->count() }}
+                                    {{ $stats['total_siswa'] }}
                                 </h4>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                             <div>
                                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Modul Aktif</p>
                                 <h4 class="text-3xl font-black text-slate-800 mt-1">
-                                    {{ \App\Models\Materi::count() }}
+                                    {{ $stats['total_materi'] }}
                                 </h4>
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                             <div>
                                 <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Bank Soal</p>
                                 <h4 class="text-3xl font-black text-slate-800 mt-1">
-                                    {{ \App\Models\Soal::count() }}
+                                    {{ $stats['total_soal'] }}
                                 </h4>
                             </div>
                         </div>
