@@ -52,47 +52,67 @@
                                 <div class="relative inline-block group text-left mr-auto"> {{-- mr-auto agar foto agak ke kiri (opsional) atau center --}}
                                     
                                     {{-- FOTO PROFIL --}}
-                                    <div class="relative p-1.5 bg-white rounded-full shadow-xl">
+                                    <div class="relative p-1.5 bg-white rounded-full shadow-xl overflow-hidden">
+                                        @php
+                                            $currentPhoto = Auth::user()->profile_photo_url 
+                                                ?? (Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : null);
+                                            $defaultPhoto = 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=fbbf24&color=ffffff';
+                                        @endphp
                                         <img id="photoPreview" 
-                                             src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=fbbf24&color=ffffff' }}" 
+                                             src="{{ $currentPhoto ?? $defaultPhoto }}" 
                                              alt="Profile Photo" 
                                              class="h-32 w-32 rounded-full border-4 border-yellow-400 object-cover bg-white">
                                         
-                                        {{-- Overlay Edit --}}
-                                        <label for="photoInput" class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 backdrop-blur-[2px]">
-                                            <svg class="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            </svg>
-                                        </label>
-                                    </div>
+                                         {{-- Overlay Edit --}}
+                                         <label for="photoInput" class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 backdrop-blur-[2px]">
+                                             <div class="text-center">
+                                                 <svg class="w-8 h-8 text-white mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                 </svg>
+                                                 <span class="text-[10px] text-white font-bold uppercase">Ganti File</span>
+                                             </div>
+                                         </label>
+                                     </div>
 
-                                    {{-- BADGE RANK (Siswa Only) --}}
-                                    @if(Auth::user()->role === 'siswa')
-                                    <div class="absolute bottom-1 right-1 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center p-1.5 z-20 border border-gray-100" title="{{ Auth::user()->rank_label ?? 'Rank' }}">
-                                        <img src="{{ Auth::user()->badge_image ?? asset('img/bronze.png') }}" alt="Rank" class="w-full h-full object-contain">
-                                    </div>
-                                    @endif
-                                </div>
+                                     {{-- BADGE RANK (Siswa Only) --}}
+                                     @if(Auth::user()->role === 'siswa')
+                                     <div class="absolute bottom-1 right-1 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center p-1.5 z-20 border border-gray-100" title="{{ Auth::user()->rank_label ?? 'Rank' }}">
+                                         <img src="{{ Auth::user()->badge_image ?? asset('img/bronze.png') }}" alt="Rank" class="w-full h-full object-contain">
+                                     </div>
+                                     @endif
+                                 </div>
 
-                                <input type="file" id="photoInput" name="photo" class="hidden" accept="image/*" onchange="previewImage(this)">
+                                 <input type="file" id="photoInput" name="photo" class="hidden" accept="image/*" onchange="previewImage(this)">
 
-                                {{-- Identitas User --}}
-                                <div class="mt-4">
-                                    <h3 class="text-2xl font-bold text-gray-800 leading-tight">{{ Auth::user()->name }}</h3>
-                                    <div class="inline-flex items-center gap-2 mt-1">
-                                        <span class="px-3 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider border border-blue-100">
-                                            {{ Auth::user()->role }}
-                                        </span>
-                                    </div>
-                                </div>
+                                 {{-- Identitas User --}}
+                                 <div class="mt-4">
+                                     <h3 class="text-2xl font-bold text-gray-800 leading-tight">{{ Auth::user()->name }}</h3>
+                                     <div class="inline-flex items-center gap-2 mt-1">
+                                         <span class="px-3 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider border border-blue-100">
+                                             {{ Auth::user()->role }}
+                                         </span>
+                                     </div>
+                                 </div>
 
-                                {{-- Tombol Simpan Foto --}}
-                                <div id="savePhotoButton" class="hidden mt-4 animate-fade-in-up">
-                                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-500/30 hover:shadow-xl hover:scale-[1.02] transition-all duration-200">
-                                        Simpan Foto Baru
-                                    </button>
-                                </div>
+                                 {{-- OPSI LINK URL (Untuk Vercel Permanen) --}}
+                                 <div class="mt-6 text-left">
+                                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Atau Gunakan Link Foto (URL)</label>
+                                     <div class="flex gap-2">
+                                         <input type="url" name="photo_url" value="{{ Auth::user()->profile_photo_url }}" 
+                                                placeholder="https://contoh.com/foto.jpg"
+                                                class="flex-1 text-xs bg-slate-50 border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 h-9"
+                                                oninput="previewUrl(this.value)">
+                                     </div>
+                                     <p class="text-[9px] text-slate-400 mt-1 italic">*Gunakan ini agar foto tetap tampil di Vercel.</p>
+                                 </div>
+
+                                 {{-- Tombol Simpan Foto --}}
+                                 <div id="savePhotoButton" class="hidden mt-4 animate-fade-in-up">
+                                     <button type="submit" class="w-full bg-slate-800 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg hover:bg-slate-700 transition-all duration-200">
+                                         Simpan Perubahan Foto
+                                     </button>
+                                 </div>
                             </form>
 
                             {{-- Divider --}}
@@ -188,15 +208,18 @@
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
-                
                 reader.onload = function(e) {
-                    // Ganti sumber gambar img dengan hasil bacaan file
                     document.getElementById('photoPreview').src = e.target.result;
-                    // Munculkan tombol simpan
                     document.getElementById('savePhotoButton').classList.remove('hidden');
                 }
-                
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewUrl(url) {
+            if (url && url.startsWith('http')) {
+                document.getElementById('photoPreview').src = url;
+                document.getElementById('savePhotoButton').classList.remove('hidden');
             }
         }
     </script>

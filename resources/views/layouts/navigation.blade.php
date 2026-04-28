@@ -113,7 +113,11 @@
                                 <span class="text-[9px] text-blue-200 uppercase tracking-wider">{{ Auth::user()->role ?? 'Siswa' }}</span>
                             </div>
                             <div class="h-8 w-8 rounded-full overflow-hidden border-2 border-white/50 group-hover:border-yellow-300 transition-colors shrink-0">
-                                <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=fbbf24&color=ffffff' }}"
+                                @php
+                                    $navPhoto = Auth::user()->profile_photo_url 
+                                        ?? (Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=fbbf24&color=ffffff');
+                                @endphp
+                                <img src="{{ $navPhoto }}"
                                      alt="{{ Auth::user()->name }}" class="h-full w-full object-cover">
                             </div>
                             <div class="ml-1 text-blue-200">
@@ -190,7 +194,7 @@
         <div class="pt-4 pb-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
             <div class="px-4 flex items-center gap-3">
                  <div class="h-10 w-10 rounded-full overflow-hidden border border-gray-300">
-                    <img src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=random' }}"
+                    <img src="{{ Auth::user()->profile_photo_url ?? (Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=random') }}"
                          class="h-full w-full object-cover">
                 </div>
                 <div>

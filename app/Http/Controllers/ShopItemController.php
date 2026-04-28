@@ -22,7 +22,13 @@ class ShopItemController extends Controller
             // 3. Kirim ke View
             return view('guru.shop.index', compact('items', 'transactions'));
         } catch (\Illuminate\Database\QueryException $e) {
-            return response()->view('errors.database', ['message' => 'Tabel database Shop belum siap. Silakan jalankan migrasi (php artisan migrate).'], 500);
+            // FITUR OTOMATIS: Coba jalankan migrasi jika tabel tidak ditemukan
+            try {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                return redirect()->refresh()->with('success', 'Database berhasil disiapkan secara otomatis!');
+            } catch (\Exception $ex) {
+                return response()->view('errors.database', ['message' => 'Gagal menjalankan migrasi otomatis: ' . $ex->getMessage()], 500);
+            }
         }
     }
 
