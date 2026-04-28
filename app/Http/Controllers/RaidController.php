@@ -17,25 +17,26 @@ class RaidController extends Controller
 
     // 1. Dashboard Utama Guru
     public function indexGuru() {
-        $event = RaidEvent::first(); 
+        try {
+            $event = RaidEvent::first(); 
 
-        // AUTO-CREATE: Jika belum ada event sama sekali, buat 1 default agar tidak error 500
-        if (!$event) {
-            $event = RaidEvent::create([
-                'mafia_name' => 'Don Corleone',
-                'total_hp' => 100,
-                'current_hp' => 100,
-                'status' => 'closed'
-            ]);
+            // AUTO-CREATE: Jika belum ada event sama sekali, buat 1 default agar tidak error 500
+            if (!$event) {
+                $event = RaidEvent::create([
+                    'mafia_name' => 'Don Corleone',
+                    'total_hp' => 100,
+                    'current_hp' => 100,
+                    'status' => 'closed'
+                ]);
+            }
+
+            $bankSoalKuis = Soal::with('materi')->get();
+            $existingQuestions = $event->soals->pluck('pertanyaan')->toArray();
+
+            return view('guru.raid.index', compact('event', 'bankSoalKuis', 'existingQuestions'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->view('errors.database', ['message' => 'Tabel database Raid belum siap. Silakan jalankan migrasi (php artisan migrate).'], 500);
         }
-
-        $bankSoalKuis = Soal::with('materi')->get();
-
-        // Ambil semua soal dari Bank Kuis (Tabel 'soals') untuk fitur Import
-        // Kita gunakan 'latest()' agar soal terbaru muncul di atas
-        $existingQuestions = $event->soals->pluck('pertanyaan')->toArray();
-
-         return view('guru.raid.index', compact('event', 'bankSoalKuis', 'existingQuestions'));
     }
 
     // 2. Update Status Event (Buka/Tutup/Mulai)

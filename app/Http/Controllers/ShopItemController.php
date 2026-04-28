@@ -12,14 +12,18 @@ class ShopItemController extends Controller
     // Menampilkan halaman Shop Guru
     public function index()
     {
-        // 1. Ambil semua barang
-        $items = ShopItem::latest()->get();
+        try {
+            // 1. Ambil semua barang
+            $items = ShopItem::latest()->get();
 
-        // 2. Ambil riwayat transaksi (agar Guru bisa lihat siapa yang beli)
-        $transactions = ShopTransaction::with(['user', 'item'])->latest()->get();
+            // 2. Ambil riwayat transaksi (agar Guru bisa lihat siapa yang beli)
+            $transactions = ShopTransaction::with(['user', 'item'])->latest()->get();
 
-        // 3. Kirim ke View
-        return view('guru.shop.index', compact('items', 'transactions'));
+            // 3. Kirim ke View
+            return view('guru.shop.index', compact('items', 'transactions'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->view('errors.database', ['message' => 'Tabel database Shop belum siap. Silakan jalankan migrasi (php artisan migrate).'], 500);
+        }
     }
 
     // Simpan Barang Baru
