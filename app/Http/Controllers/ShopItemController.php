@@ -16,19 +16,16 @@ class ShopItemController extends Controller
             // 1. Ambil semua barang
             $items = ShopItem::latest()->get();
 
-            // 2. Ambil riwayat transaksi (agar Guru bisa lihat siapa yang beli)
-            $transactions = ShopTransaction::with(['user', 'item'])->latest()->get();
+            // 2. Ambil riwayat transaksi (Eager load user & item untuk performa)
+            $transactions = ShopTransaction::with(['user', 'item'])->latest()->limit(30)->get();
 
             // 3. Kirim ke View
             return view('guru.shop.index', compact('items', 'transactions'));
         } catch (\Illuminate\Database\QueryException $e) {
-            // FITUR OTOMATIS: Coba jalankan migrasi jika tabel tidak ditemukan
-            try {
-                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-                return redirect()->refresh()->with('success', 'Database berhasil disiapkan secara otomatis!');
-            } catch (\Exception $ex) {
-                return response()->view('errors.database', ['message' => 'Gagal menjalankan migrasi otomatis: ' . $ex->getMessage()], 500);
-            }
+            return response()->view('errors.database', [
+                'message' => 'Tabel Shop belum siap.',
+                'error_detail' => $e->getMessage()
+            ], 500);
         }
     }
 

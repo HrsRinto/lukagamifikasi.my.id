@@ -13,11 +13,14 @@ class GuruController extends Controller
      */
     public function dashboard()
     {
-        $stats = [
-            'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
-            'total_materi' => \App\Models\Materi::count(),
-            'total_soal' => \App\Models\Soal::count(),
-        ];
+        // Cache statistik selama 5 menit untuk performa maksimal
+        $stats = \Illuminate\Support\Facades\Cache::remember('guru_dashboard_stats', 300, function() {
+            return [
+                'total_siswa' => \App\Models\User::where('role', 'siswa')->count(),
+                'total_materi' => \App\Models\Materi::count(),
+                'total_soal' => \App\Models\Soal::count(),
+            ];
+        });
 
         return view('guru.dashboard', compact('stats'));
     }

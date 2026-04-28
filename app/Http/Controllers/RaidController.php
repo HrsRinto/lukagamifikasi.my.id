@@ -18,9 +18,10 @@ class RaidController extends Controller
     // 1. Dashboard Utama Guru
     public function indexGuru() {
         try {
+            // Gunakan caching atau limit untuk performa jika data besar
             $event = RaidEvent::first(); 
 
-            // AUTO-CREATE: Jika belum ada event sama sekali, buat 1 default agar tidak error 500
+            // AUTO-CREATE: Jika belum ada event sama sekali
             if (!$event) {
                 $event = RaidEvent::create([
                     'mafia_name' => 'Don Corleone',
@@ -30,18 +31,17 @@ class RaidController extends Controller
                 ]);
             }
 
-            $bankSoalKuis = Soal::with('materi')->get();
+            // OPTIMASI: Ambil 50 soal terbaru saja (jangan semua) dan gunakan eager loading
+            $bankSoalKuis = Soal::with('materi')->latest()->limit(50)->get();
             $existingQuestions = $event->soals->pluck('pertanyaan')->toArray();
 
             return view('guru.raid.index', compact('event', 'bankSoalKuis', 'existingQuestions'));
         } catch (\Illuminate\Database\QueryException $e) {
-            // FITUR OTOMATIS: Coba jalankan migrasi jika tabel tidak ditemukan
-            try {
-                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-                return redirect()->refresh()->with('success', 'Database berhasil disiapkan secara otomatis!');
-            } catch (\Exception $ex) {
-                return response()->view('errors.database', ['message' => 'Gagal menjalankan migrasi otomatis: ' . $ex->getMessage()], 500);
-            }
+            // Jika tabel missing, lempar ke halaman error terstruktur
+            return response()->view('errors.database', [
+                'message' => 'Sistem mendeteksi ada tabel yang belum siap. Hal ini umum terjadi pada deployment baru.',
+                'error_detail' => $e->getMessage()
+            ], 500);
         }
     }
 

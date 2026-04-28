@@ -74,10 +74,15 @@ class ProfileController extends Controller
         
         // 2. Jika ada input URL
         if ($request->photo_url) {
-            $user->profile_photo_url = $request->photo_url;
-            if ($user->profile_photo_path) {
-                Storage::disk('public')->delete($user->profile_photo_path);
-                $user->profile_photo_path = null;
+            // Cek apakah kolom profile_photo_url sudah ada di database (untuk cegah error 500 jika migrasi belum jalan)
+            if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'profile_photo_url')) {
+                $user->profile_photo_url = $request->photo_url;
+                if ($user->profile_photo_path) {
+                    Storage::disk('public')->delete($user->profile_photo_path);
+                    $user->profile_photo_path = null;
+                }
+            } else {
+                return back()->with('error', 'Fitur Link URL belum siap di server ini. Silakan hubungi admin untuk migrasi database.');
             }
         }
 

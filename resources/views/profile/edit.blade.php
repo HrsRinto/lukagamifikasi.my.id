@@ -109,8 +109,9 @@
 
                                  {{-- Tombol Simpan Foto --}}
                                  <div id="savePhotoButton" class="hidden mt-4 animate-fade-in-up">
-                                     <button type="submit" class="w-full bg-slate-800 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg hover:bg-slate-700 transition-all duration-200">
-                                         Simpan Perubahan Foto
+                                     <button type="submit" id="btnSubmitPhoto" class="w-full bg-slate-800 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg hover:bg-slate-700 transition-all duration-200 flex items-center justify-center gap-2">
+                                         <span id="btnText">Simpan Perubahan Foto</span>
+                                         <div id="btnLoader" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                      </button>
                                  </div>
                             </form>
@@ -222,6 +223,18 @@
                 document.getElementById('savePhotoButton').classList.remove('hidden');
             }
         }
+
+        // Handle Submit Loading
+        document.querySelector('form[action*="profile/photo"]').addEventListener('submit', function() {
+            const btn = document.getElementById('btnSubmitPhoto');
+            const text = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            text.innerText = 'Mengupload...';
+            loader.classList.remove('hidden');
+        });
     </script>
     
     {{-- Animasi Fade In --}}

@@ -17,6 +17,9 @@ use App\Http\Controllers\RaidController;
 |--------------------------------------------------------------------------
 */
 
+// Route untuk perbaikan database (Safe Migration)
+Route::get('/admin/repair-db', [\App\Http\Controllers\SystemController::class, 'repairDatabase'])->name('admin.repair-db');
+
 Route::get('/', function () {
     // Jika user sudah login, arahkan ke dashboard
     if (Auth::check()) {
