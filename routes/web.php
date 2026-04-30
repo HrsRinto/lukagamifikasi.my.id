@@ -125,3 +125,30 @@ Route::prefix('guru/raid')->name('guru.raid.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/debug-db', function() {
+    try {
+        $dbName = \Illuminate\Support\Facades\DB::connection()->getDatabaseName();
+        $tables = \Illuminate\Support\Facades\DB::select('SHOW TABLES');
+        
+        $report = "<h1>Laporan Kesehatan TiDB</h1>";
+        $report .= "<p style='color:green'>✅ Koneksi Berhasil ke Database: <b>$dbName</b></p>";
+        
+        $report .= "<h3>Daftar Tabel:</h3><ul>";
+        foreach ($tables as $table) {
+            $name = array_values((array)$table)[0];
+            $report .= "<li>$name</li>";
+        }
+        $report .= "</ul>";
+
+        // Cek Kolom Spesifik di raid_events
+        if (\Illuminate\Support\Facades\Schema::hasTable('raid_events')) {
+            $hasTimestamps = \Illuminate\Support\Facades\Schema::hasColumn('raid_events', 'updated_at');
+            $report .= "<p>Status Tabel Raid: " . ($hasTimestamps ? "<b style='color:green'>Lengkap (Timestamps OK)</b>" : "<b style='color:red'>EROR (updated_at Hilang!)</b>") . "</p>";
+        }
+
+        return $report;
+    } catch (\Exception $e) {
+        return "<h1>Koneksi GAGAL!</h1><p style='color:red'>" . $e->getMessage() . "</p>";
+    }
+});
