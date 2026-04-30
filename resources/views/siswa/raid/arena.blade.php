@@ -334,5 +334,27 @@
 
         // Mulai Game
         loadSoal();
+
+        // Polling HP Boss untuk Sinkronisasi Real-time (Setiap 4 detik)
+        function syncBossHP() {
+            fetch("{{ route('siswa.raid.get_hp') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'finished') {
+                        window.location.reload();
+                        return;
+                    }
+
+                    // Update UI HP Bar
+                    let hpPercent = (data.hp / data.total) * 100;
+                    document.getElementById('boss-hp-text').innerText = data.hp + " / " + data.total + " HP";
+                    document.getElementById('boss-hp-bar').style.width = hpPercent + "%";
+                    
+                    // Update total HP jika berubah
+                    totalHP = data.total;
+                });
+        }
+
+        setInterval(syncBossHP, 4000);
     </script>
 </x-app-layout>

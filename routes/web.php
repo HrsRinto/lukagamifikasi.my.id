@@ -95,6 +95,7 @@ Route::prefix('raid')->name('siswa.raid.')->group(function () {
     Route::get('/', [RaidController::class, 'indexSiswa'])->name('index');
     Route::get('/lobby-data', [RaidController::class, 'getLobbyData'])->name('lobby_data'); // AJAX Polling
     Route::get('/get-soal', [RaidController::class, 'getSoal'])->name('get_soal');
+    Route::get('/get-hp', [RaidController::class, 'getBossHP'])->name('get_hp');
     Route::post('/attack', [RaidController::class, 'attackBoss'])->name('attack');
 });
 

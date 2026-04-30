@@ -220,6 +220,63 @@
                     </div>
                 </div>
 
+                {{-- SECTION: BURSA PREVILESE (SHOP) --}}
+                <div class="scroll-reveal">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center">
+                            <div class="bg-indigo-500 w-1.5 h-10 rounded-full mr-4 shadow-[0_0_15px_rgba(99,102,241,0.6)] animate-pulse"></div>
+                            <div>
+                                <h3 class="text-3xl font-black text-white uppercase tracking-tight">Bursa Previlese</h3>
+                                <p class="text-blue-200 text-sm">Tukarkan XP kamu dengan keuntungan spesial!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @forelse($shopItems as $item)
+                        <div class="tilt-card group relative overflow-hidden rounded-[2.5rem] bg-[#1e293b]/80 backdrop-blur-xl border border-white/10 p-1 shadow-2xl transition-all duration-500 hover:shadow-indigo-500/20">
+                            {{-- Image Container --}}
+                            <div class="h-48 rounded-[2rem] overflow-hidden relative">
+                                <img src="{{ $item->image ? asset('storage/' . $item->image) : 'https://images.unsplash.com/photo-1593642532400-2682810df593?q=80&w=500&auto=format&fit=crop' }}"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#1e293b] via-transparent to-transparent opacity-60"></div>
+                                
+                                {{-- Stock Badge --}}
+                                <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20">
+                                    STOK: {{ $item->stock }}
+                                </div>
+                            </div>
+
+                            <div class="p-6">
+                                <h4 class="text-xl font-bold text-white mb-2">{{ $item->name }}</h4>
+                                <p class="text-gray-400 text-sm line-clamp-2 mb-6 h-10">{{ $item->description }}</p>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-2xl font-black text-yellow-400">{{ number_format($item->price) }}</span>
+                                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">XP</span>
+                                    </div>
+
+                                    <form action="{{ route('siswa.shop.buy', $item->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                {{ $user->points < $item->price || $item->stock <= 0 ? 'disabled' : '' }}>
+                                            TUKAR
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="col-span-full py-20 text-center bg-white/5 rounded-[2.5rem] border border-dashed border-white/20">
+                            <span class="text-5xl mb-4 block">📦</span>
+                            <h4 class="text-xl font-bold text-white opacity-50">Toko sedang tutup. Kembali lagi nanti!</h4>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
                 {{-- SECTION 2: LEADERBOARD TEASER --}}
                 <div class="relative scroll-reveal">
                     <div class="bg-gray-900 rounded-t-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-2xl border-b border-gray-800 transform hover:scale-[1.01] transition duration-500">

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'points',
         'level',
         'profile_photo_path',
+        'profile_photo_url',
     ];
 
     /**
@@ -113,5 +114,16 @@ class User extends Authenticatable
         // Langsung kembalikan nilai batch agar konsisten
         return $this->batch;
     }
-    
+
+    // 5. Mendapatkan URL Foto Profil (Gabungan Path & URL Luar)
+    public function getPhotoUrlAttribute()
+    {
+        if (!empty($this->profile_photo_url)) {
+            return $this->profile_photo_url;
+        }
+
+        return $this->profile_photo_path
+            ? asset('storage/' . $this->profile_photo_path)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
+    }
 }

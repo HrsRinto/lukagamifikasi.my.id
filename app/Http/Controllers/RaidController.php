@@ -128,15 +128,13 @@ class RaidController extends Controller
         if (!$event) return response()->json(['status' => 'closed', 'participants' => []]);
 
         $participants = RaidParticipant::where('raid_event_id', $event->id)
-                        ->with(['user:id,name,profile_photo_path']) // Eager load only needed columns
+                        ->with(['user:id,name,profile_photo_path,profile_photo_url']) // Tambahkan profile_photo_url
                         ->orderBy('damage_dealt', 'desc')
                         ->get();
 
-        // Tambahkan logic Foto Profil (Lebih efisien)
+        // Gunakan accessor photo_url dari model User
         $participants->transform(function($p) {
-            $p->user->photo_url = $p->user->profile_photo_path 
-                ? asset('storage/' . $p->user->profile_photo_path) 
-                : 'https://ui-avatars.com/api/?name=' . urlencode($p->user->name) . '&background=random&color=fff';
+            $p->user->photo_url = $p->user->photo_url;
             return $p;
         });
 
@@ -193,13 +191,11 @@ class RaidController extends Controller
         if (!$event) return response()->json(['status' => 'closed', 'players' => []]);
 
         $players = RaidParticipant::where('raid_event_id', $event->id)
-                    ->with(['user:id,name,profile_photo_path'])
+                    ->with(['user:id,name,profile_photo_path,profile_photo_url'])
                     ->get();
 
         $players->transform(function($player) {
-            $player->user->photo_url = $player->user->profile_photo_path 
-                ? asset('storage/' . $player->user->profile_photo_path) 
-                : 'https://ui-avatars.com/api/?name=' . urlencode($player->user->name) . '&background=random&color=fff';
+            $player->user->photo_url = $player->user->photo_url;
             return $player;
         });
 
@@ -296,6 +292,18 @@ class RaidController extends Controller
         $event->update(['timer_seconds' => $request->timer_seconds]);
 
         return back()->with('success', 'Timer berhasil diubah menjadi ' . $request->timer_seconds . ' detik!');
+    }
+
+    // 9. API Ambil HP Boss Saja (Untuk Polling Cepat di Arena)
+    public function getBossHP() {
+        $event = RaidEvent::first();
+        if (!$event) return response()->json(['hp' => 0, 'total' => 0, 'status' => 'closed']);
+
+        return response()->json([
+            'hp' => $event->current_hp,
+            'total' => $event->total_hp,
+            'status' => $event->status
+        ]);
     }
 
 }

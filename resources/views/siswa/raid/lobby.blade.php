@@ -96,7 +96,7 @@
                             html += `
                                 <div class="group relative bg-slate-800 border-2 border-slate-700 rounded-xl p-4 flex flex-col items-center transition-all hover:border-yellow-500 hover:bg-slate-700 hover:-translate-y-1">
                                     <div class="relative">
-                                        <img src="${photoUrl}"
+                                        <img src="${photoUrl}?t=${new Date().getTime()}"
                                              class="w-16 h-16 rounded-full mb-3 border-2 border-white shadow-lg object-cover">
                                         <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full animate-pulse"></span>
                                     </div>
