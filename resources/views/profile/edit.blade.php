@@ -53,13 +53,8 @@
                                     
                                     {{-- FOTO PROFIL --}}
                                     <div class="relative p-1.5 bg-white rounded-full shadow-xl overflow-hidden">
-                                        @php
-                                            $currentPhoto = Auth::user()->profile_photo_url 
-                                                ?? (Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : null);
-                                            $defaultPhoto = 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=fbbf24&color=ffffff';
-                                        @endphp
                                         <img id="photoPreview" 
-                                             src="{{ $currentPhoto ?? $defaultPhoto }}" 
+                                             src="{{ Auth::user()->photo_url }}?t={{ time() }}" 
                                              alt="Profile Photo" 
                                              class="h-32 w-32 rounded-full border-4 border-yellow-400 object-cover bg-white">
                                         

@@ -100,6 +100,13 @@ Route::prefix('raid')->name('siswa.raid.')->group(function () {
     Route::post('/attack', [RaidController::class, 'attackBoss'])->name('attack');
 });
 
+Route::group(['prefix' => 'shop-guru', 'as' => 'shop-guru.', 'middleware' => ['auth', 'role:guru']], function () {
+    Route::get('/', [ShopItemController::class, 'index'])->name('index');
+    Route::post('/', [ShopItemController::class, 'store'])->name('store');
+    Route::patch('/{id}', [ShopItemController::class, 'update'])->name('update');
+    Route::delete('/{id}', [ShopItemController::class, 'destroy'])->name('destroy');
+});
+
 Route::prefix('guru/raid')->name('guru.raid.')->group(function () {
     Route::get('/', [RaidController::class, 'indexGuru'])->name('index');
     Route::post('/update-status', [RaidController::class, 'updateStatus'])->name('update_status');

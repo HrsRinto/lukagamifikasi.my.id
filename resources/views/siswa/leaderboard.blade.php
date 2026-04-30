@@ -80,12 +80,7 @@
 
                             <div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-b from-gray-300 to-gray-600 shadow-2xl relative z-10">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-2 border-gray-400">
-                                    @if($leaderboard[1]->profile_photo_url || $leaderboard[1]->profile_photo_path)
-                                        @php $p2 = $leaderboard[1]->profile_photo_url ?? asset('storage/' . $leaderboard[1]->profile_photo_path); @endphp
-                                        <img src="{{ $p2 }}" class="w-full h-full object-cover" alt="Foto Profil">
-                                    @else
-                                        <span class="text-2xl font-bold text-gray-300">{{ strtoupper(substr($leaderboard[1]->name, 0, 2)) }}</span>
-                                    @endif
+                                    <img src="{{ $leaderboard[1]->photo_url }}" class="w-full h-full object-cover" alt="Foto Profil">
                                 </div>
                             </div>
                             <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-gray-200 border-2 border-[#1e293b] flex items-center justify-center text-gray-800 font-black shadow-lg z-20">2</div>
@@ -117,12 +112,7 @@
 
                             <div class="w-28 h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-700 shadow-2xl relative z-10 transform group-hover:scale-105 transition-transform duration-300">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-4 border-yellow-600">
-                                    @if($leaderboard[0]->profile_photo_url || $leaderboard[0]->profile_photo_path)
-                                        @php $p1 = $leaderboard[0]->profile_photo_url ?? asset('storage/' . $leaderboard[0]->profile_photo_path); @endphp
-                                        <img src="{{ $p1 }}" class="w-full h-full object-cover" alt="Foto Profil">
-                                    @else
-                                        <span class="text-4xl font-bold text-yellow-400">{{ strtoupper(substr($leaderboard[0]->name, 0, 2)) }}</span>
-                                    @endif
+                                    <img src="{{ $leaderboard[0]->photo_url }}" class="w-full h-full object-cover" alt="Foto Profil">
                                 </div>
                             </div>
                              <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-yellow-400 border-4 border-[#1e293b] flex items-center justify-center text-yellow-900 font-black text-lg shadow-xl z-20">1</div>
@@ -150,12 +140,7 @@
 
                             <div class="w-20 h-20 md:w-24 md:h-24 rounded-full p-1 bg-gradient-to-b from-orange-300 to-orange-800 shadow-2xl relative z-10">
                                 <div class="w-full h-full rounded-full bg-[#1e293b] flex items-center justify-center overflow-hidden border-2 border-orange-700">
-                                    @if($leaderboard[2]->profile_photo_url || $leaderboard[2]->profile_photo_path)
-                                        @php $p3 = $leaderboard[2]->profile_photo_url ?? asset('storage/' . $leaderboard[2]->profile_photo_path); @endphp
-                                        <img src="{{ $p3 }}" class="w-full h-full object-cover" alt="Foto Profil">
-                                    @else
-                                        <span class="text-2xl font-bold text-orange-400">{{ strtoupper(substr($leaderboard[2]->name, 0, 2)) }}</span>
-                                    @endif
+                                    <img src="{{ $leaderboard[2]->photo_url }}" class="w-full h-full object-cover" alt="Foto Profil">
                                 </div>
                             </div>
                              <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-orange-500 border-2 border-[#1e293b] flex items-center justify-center text-white font-black shadow-lg z-20">3</div>
@@ -191,11 +176,7 @@
 
                                 <div class="relative flex-shrink-0">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-gray-200 group-hover:border-cyan-400 transition-colors">
-                                        @if($s->profile_photo_url || $s->profile_photo_path)
-                                            <img src="{{ $s->profile_photo_url ?? asset('storage/' . $s->profile_photo_path) }}" class="w-full h-full object-cover" alt="Foto Profil">
-                                        @else
-                                            <span class="text-slate-500 font-bold text-lg">{{ strtoupper(substr($s->name, 0, 2)) }}</span>
-                                        @endif
+                                        <img src="{{ $s->photo_url }}" class="w-full h-full object-cover" alt="Foto Profil">
                                     </div>
                                     <img src="{{ $s->badge_image }}" class="absolute -bottom-1 -right-1 w-5 h-5 z-10 drop-shadow-sm" alt="Rank">
                                 </div>

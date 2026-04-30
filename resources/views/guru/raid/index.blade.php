@@ -19,6 +19,21 @@
                     </button>
                 </form>
             </div>
+            {{-- QUICK GUIDE --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start gap-3">
+                    <span class="bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                    <p class="text-xs text-blue-700 font-medium">Klik <strong>BUKA LOBBY</strong> agar siswa bisa bergabung di HP mereka.</p>
+                </div>
+                <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100 flex items-start gap-3">
+                    <span class="bg-indigo-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                    <p class="text-xs text-indigo-700 font-medium">Klik <strong>MULAI PERANG</strong> jika pasukan sudah terkumpul di Monitor.</p>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-start gap-3">
+                    <span class="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                    <p class="text-xs text-emerald-700 font-medium">Gunakan <strong>RESET EVENT</strong> hanya saat ingin memulai event baru dari nol.</p>
+                </div>
+            </div>
 
             {{-- SECTION 1: STATUS CONTROL (TETAP SEPERTI SEBELUMNYA) --}}
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">

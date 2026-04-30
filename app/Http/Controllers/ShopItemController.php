@@ -37,13 +37,18 @@ class ShopItemController extends Controller
             'price' => 'required|integer|min:1',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'image_url' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['name', 'price', 'stock', 'description']);
 
-        // Upload Gambar
-        if ($request->hasFile('image')) {
+        // Jika ada Image URL
+        if ($request->image_url) {
+            $data['image'] = $request->image_url;
+        } 
+        // Jika ada upload file
+        elseif ($request->hasFile('image')) {
             $path = $request->file('image')->store('shop-items', 'public');
             $data['image'] = $path;
         }
@@ -53,12 +58,46 @@ class ShopItemController extends Controller
         return redirect()->back()->with('success', 'Barang berhasil ditambahkan!');
     }
 
+    // Update Barang
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|integer|min:1',
+            'stock' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'image_url' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $item = ShopItem::findOrFail($id);
+        $data = $request->only(['name', 'price', 'stock', 'description']);
+
+        // Jika ada Image URL, prioritaskan itu
+        if ($request->image_url) {
+            $data['image'] = $request->image_url;
+        } 
+        // Jika ada upload file
+        elseif ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada di storage
+            if ($item->image && !filter_var($item->image, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($item->image);
+            }
+            $path = $request->file('image')->store('shop-items', 'public');
+            $data['image'] = $path;
+        }
+
+        $item->update($data);
+
+        return redirect()->back()->with('success', 'Barang berhasil diperbarui!');
+    }
+
     // Hapus Barang
     public function destroy($id)
     {
         $item = ShopItem::findOrFail($id);
         
-        if ($item->image) {
+        if ($item->image && !filter_var($item->image, FILTER_VALIDATE_URL)) {
             Storage::disk('public')->delete($item->image);
         }
         

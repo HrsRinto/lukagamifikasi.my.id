@@ -237,7 +237,7 @@
                         <div class="tilt-card group relative overflow-hidden rounded-[2.5rem] bg-[#1e293b]/80 backdrop-blur-xl border border-white/10 p-1 shadow-2xl transition-all duration-500 hover:shadow-indigo-500/20">
                             {{-- Image Container --}}
                             <div class="h-48 rounded-[2rem] overflow-hidden relative">
-                                <img src="{{ $item->image ? asset('storage/' . $item->image) : 'https://images.unsplash.com/photo-1593642532400-2682810df593?q=80&w=500&auto=format&fit=crop' }}"
+                                <img src="{{ filter_var($item->image, FILTER_VALIDATE_URL) ? $item->image : ($item->image ? asset('storage/' . $item->image) : 'https://images.unsplash.com/photo-1593642532400-2682810df593?q=80&w=500&auto=format&fit=crop') }}"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#1e293b] via-transparent to-transparent opacity-60"></div>
                                 
