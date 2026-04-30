@@ -14,25 +14,40 @@ class SystemController extends Controller
     public function repairDatabase()
     {
         try {
-            // 1. Pastikan tabel migrations ada
-            if (!Schema::hasTable('migrations')) {
-                Artisan::call('migrate:install', ['--force' => true]);
+            // 1. Tambahkan kolom yang mungkin kurang secara manual (Brute Force Fix)
+            // Ini untuk mengatasi masalah "Column not found" yang Anda alami
+            
+            // Perbaikan untuk tabel Users
+            DB::statement("ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo_url TEXT NULL AFTER profile_photo_path");
+            
+            // Perbaikan untuk tabel Raid Events
+            if (Schema::hasTable('raid_events')) {
+                if (!Schema::hasColumn('raid_events', 'created_at')) {
+                    DB::statement("ALTER TABLE raid_events ADD COLUMN created_at TIMESTAMP NULL");
+                }
+                if (!Schema::hasColumn('raid_events', 'updated_at')) {
+                    DB::statement("ALTER TABLE raid_events ADD COLUMN updated_at TIMESTAMP NULL");
+                }
             }
 
-            // 2. Jalankan migrasi
-            // Kita coba jalankan secara umum dulu
+            // Perbaikan untuk tabel Raid Participants
+            if (Schema::hasTable('raid_participants')) {
+                if (!Schema::hasColumn('raid_participants', 'created_at')) {
+                    DB::statement("ALTER TABLE raid_participants ADD COLUMN created_at TIMESTAMP NULL");
+                }
+                if (!Schema::hasColumn('raid_participants', 'updated_at')) {
+                    DB::statement("ALTER TABLE raid_participants ADD COLUMN updated_at TIMESTAMP NULL");
+                }
+            }
+
+            // 2. Coba jalankan migrasi standar jika masih ada yang kurang
             Artisan::call('migrate', ['--force' => true]);
 
-            return redirect()->route('dashboard')->with('success', 'Database berhasil diperbaiki dan diperbarui!');
+            return redirect()->route('dashboard')->with('success', 'Database berhasil diperbaiki secara paksa!');
         } catch (\Exception $e) {
-            $message = $e->getMessage();
-            
-            // Jika errornya adalah "table already exists", kita bisa mencoba menandai migrasi tersebut sebagai selesai
-            // Tapi yang paling aman adalah memberikan pesan error yang jelas ke user.
             return response()->view('errors.database', [
-                'message' => 'Gagal memperbaiki database secara otomatis.',
-                'error_detail' => $message,
-                'solution' => 'Sepertinya ada ketidaksinkronan antara tabel fisik dan catatan migrasi. Jika ini database baru, Anda bisa mencoba mengosongkan database dan menjalankan ulang.'
+                'message' => 'Gagal memperbaiki database.',
+                'error_detail' => $e->getMessage()
             ], 500);
         }
     }

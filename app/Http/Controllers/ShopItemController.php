@@ -21,9 +21,8 @@ class ShopItemController extends Controller
 
             // 3. Kirim ke View
             return view('guru.shop.index', compact('items', 'transactions'));
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (\Exception $e) {
             return response()->view('errors.database', [
-                'message' => 'Tabel Shop belum siap.',
                 'error_detail' => $e->getMessage()
             ], 500);
         }
