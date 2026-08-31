@@ -63,14 +63,7 @@
                                                 <img class="h-11 w-11 rounded-full object-cover border-2 border-white shadow-sm group-hover:border-blue-200 transition-colors" src="{{ $siswa->photo_url }}" alt="{{ $siswa->name }}">
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-2">
-                                                    {{ $siswa->name }}
-                                                    @if($siswa->forgot_password_reported)
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black bg-red-50 text-red-600 border border-red-200 animate-pulse">
-                                                            Lupa Password
-                                                        </span>
-                                                    @endif
-                                                </div>
+                                                <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $siswa->name }}</div>
                                                 <div class="text-xs text-gray-500 font-medium">{{ $siswa->email }}</div>
                                             </div>
                                         </div>
@@ -103,16 +96,6 @@
                                             <a href="{{ route('siswas.edit', $siswa->id) }}" class="p-2 text-indigo-500 hover:text-white hover:bg-indigo-500 rounded-lg transition-all duration-200" title="Edit Data">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </a>
-
-                                            {{-- Tandai Selesai Lupa Password --}}
-                                            @if($siswa->forgot_password_reported)
-                                                <form action="{{ route('siswas.clear_forgot_report', $siswa->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    <button type="submit" class="p-2 text-emerald-500 hover:text-white hover:bg-emerald-500 rounded-lg transition-all duration-200" title="Tandai Selesai / Reset Berhasil">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    </button>
-                                                </form>
-                                            @endif
 
                                             {{-- Hapus --}}
                                             <form action="{{ route('siswas.destroy', $siswa->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus siswa ini?');" class="inline-block">

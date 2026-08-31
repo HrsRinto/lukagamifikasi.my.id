@@ -66,7 +66,6 @@ Route::middleware('auth')->group(function () {
     // Resources
     Route::resource('gurus', GuruController::class);
     Route::resource('siswas', SiswaController::class);
-    Route::post('/siswas/{id}/clear-forgot-report', [SiswaController::class, 'clearForgotReport'])->name('siswas.clear_forgot_report');
     Route::resource('materis', MateriController::class);
     Route::resource('soals', SoalController::class);
 
