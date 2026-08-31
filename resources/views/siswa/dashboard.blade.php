@@ -402,12 +402,8 @@
                                             </div>
                                         @else
                                             <div class="relative">
-                                                <div class="w-12 h-12 rounded-full bg-gray-200 p-0.5 {{ $s->id == Auth::id() ? 'bg-gradient-to-br from-blue-400 to-indigo-500' : '' }}">
-                                                    @if($s->profile_photo_path)
-                                                        <img src="{{ asset('storage/' . $s->profile_photo_path) }}" class="w-full h-full rounded-full object-cover border-2 border-white">
-                                                    @else
-                                                        <div class="w-full h-full rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm border-2 border-white">{{ strtoupper(substr($s->name, 0, 2)) }}</div>
-                                                    @endif
+                                                <div class="w-12 h-12 rounded-full bg-gray-200 p-0.5 {{ $s->id == Auth::id() ? 'bg-gradient-to-br from-blue-400 to-indigo-500' : '' }} overflow-hidden">
+                                                    <img src="{{ $s->photo_url }}" class="w-full h-full rounded-full object-cover border-2 border-white" alt="{{ $s->name }}">
                                                 </div>
                                                 <img src="{{ $s->badge_image }}" class="absolute -bottom-1 -right-1 w-5 h-5 drop-shadow-md">
                                             </div>
