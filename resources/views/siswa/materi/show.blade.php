@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-gray-50">
     {{-- TAMBAHAN: SweetAlert2 & Youtube API Script --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -240,6 +240,26 @@
                 const unlockedSection = document.getElementById('unlocked-section');
                 unlockedSection.classList.remove('hidden');
                 unlockedSection.classList.add('animate-fade-in-up');
+
+                // Kirim AJAX POST ke server untuk menandai materi secara instan sebagai telah ditonton
+                fetch("{{ route('siswa.materi.complete', $materi->id) }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Watch progress auto-saved successfully in background.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Failed to auto-save watch progress:", error);
+                });
 
                 Swal.fire({
                     title: 'Video Selesai! 🌟',

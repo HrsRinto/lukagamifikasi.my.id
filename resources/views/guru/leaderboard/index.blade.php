@@ -85,7 +85,7 @@
 
                         <div class="text-center mt-5 mb-2">
                             <h3 class="text-white font-bold text-sm md:text-base truncate w-28 md:w-32 mx-auto drop-shadow-sm">{{ $leaderboard[1]->name }}</h3>
-                            <p class="text-gray-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[1]->points) }} XP</p>
+                            <p class="text-gray-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[1]->points) }} Poin</p>
                         </div>
                         <div class="w-full h-24 bg-gradient-to-b from-gray-600/40 to-transparent backdrop-blur-sm rounded-t-xl border-t border-gray-500/30 shadow-[0_-5px_20px_rgba(255,255,255,0.05)]"></div>
                     </div>
@@ -114,7 +114,7 @@
 
                         <div class="text-center mt-6 mb-2">
                             <h3 class="text-white font-black text-lg truncate w-32 md:w-40 mx-auto drop-shadow-md tracking-wide">{{ $leaderboard[0]->name }}</h3>
-                            <p class="text-yellow-400 font-extrabold text-xl drop-shadow-sm">{{ number_format($leaderboard[0]->points) }} XP</p>
+                            <p class="text-yellow-400 font-extrabold text-xl drop-shadow-sm">{{ number_format($leaderboard[0]->points) }} Poin</p>
                         </div>
                         <div class="w-full h-40 bg-gradient-to-b from-yellow-500/30 to-transparent backdrop-blur-md rounded-t-2xl border-t border-yellow-400/40 relative overflow-hidden shadow-[0_-10px_30px_rgba(234,179,8,0.2)]">
                             <div class="absolute inset-0 bg-white/5 skew-y-12 transform -translate-y-20"></div>
@@ -139,7 +139,7 @@
 
                         <div class="text-center mt-5 mb-2">
                             <h3 class="text-white font-bold text-sm md:text-base truncate w-28 md:w-32 mx-auto drop-shadow-sm">{{ $leaderboard[2]->name }}</h3>
-                            <p class="text-orange-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[2]->points) }} XP</p>
+                            <p class="text-orange-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[2]->points) }} Poin</p>
                         </div>
                         <div class="w-full h-20 bg-gradient-to-b from-orange-700/40 to-transparent backdrop-blur-sm rounded-t-xl border-t border-orange-500/30 shadow-[0_-5px_20px_rgba(249,115,22,0.1)]"></div>
                     </div>
@@ -176,7 +176,7 @@
 
                             <div class="text-right pl-2">
                                 <span class="block font-black text-blue-900 text-lg group-hover:text-blue-600 transition-colors">{{ number_format($s->points) }}</span>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">XP Total</span>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Poin Total</span>
                             </div>
 
                         </div>

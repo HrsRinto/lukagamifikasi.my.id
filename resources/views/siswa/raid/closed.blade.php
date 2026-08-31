@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-gray-900">
     <div class="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
 
         {{-- Ikon Gembok Besar --}}

@@ -48,7 +48,11 @@ class RaidController extends Controller
     // 2. Update Status Event (Buka/Tutup/Mulai)
     public function updateStatus(Request $request) {
         $event = RaidEvent::first();
-        $event->update(['status' => $request->status]);
+        if ($request->status === 'finished') {
+            $this->finishRaid($event);
+        } else {
+            $event->update(['status' => $request->status]);
+        }
         return back()->with('success', 'Status Event Diubah!');
     }
 
@@ -163,10 +167,21 @@ class RaidController extends Controller
                         ->where('user_id', $user->id)->first();
 
         if ($event->status == 'finished') {
-            $leaderboard = RaidParticipant::where('raid_event_id', $event->id)
-                            ->orderBy('damage_dealt', 'desc')
-                            ->with('user')
-                            ->get();
+            $leaderboard = \App\Models\User::where('role', 'siswa')
+                                ->orderBy('points', 'desc')
+                                ->get();
+
+            foreach ($leaderboard as $u) {
+                $part = RaidParticipant::where('raid_event_id', $event->id)
+                                        ->where('user_id', $u->id)
+                                        ->first();
+                $u->event_damage = $part ? $part->damage_dealt : 0;
+                $u->event_total_points = $u->event_damage;
+            }
+
+            // Urutkan berdasarkan damage terbanyak ke terendah
+            $leaderboard = $leaderboard->sortByDesc('event_damage')->values();
+
             return view('siswa.raid.result', compact('event', 'leaderboard', 'participant'));
         }
 
@@ -250,19 +265,17 @@ class RaidController extends Controller
 
     // Fungsi Internal: Selesaikan Raid
     private function finishRaid($event) {
+        if ($event->status === 'finished') {
+            return;
+        }
         $event->update(['status' => 'finished']);
 
-        $winners = RaidParticipant::where('raid_event_id', $event->id)
-                    ->orderBy('damage_dealt', 'desc')
-                    ->take(2)
-                    ->get();
-
-        if (isset($winners[0])) {
-            $winners[0]->user->increment('points', 25);
-        }
-
-        if (isset($winners[1])) {
-            $winners[1]->user->increment('points', 15);
+        // Tambahkan seluruh damage_dealt dari masing-masing peserta langsung ke points user mereka
+        $participants = RaidParticipant::where('raid_event_id', $event->id)->get();
+        foreach ($participants as $p) {
+            if ($p->damage_dealt > 0) {
+                $p->user->increment('points', $p->damage_dealt);
+            }
         }
     }
 

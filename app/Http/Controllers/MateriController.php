@@ -60,15 +60,19 @@ class MateriController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'judul' => 'required|string|max:255',
-            'link_youtube' => 'required|url',
-            'deskripsi' => 'required|string',
+            'title' => 'required|string|max:255',
+            'video_url' => 'required|url',
+            'description' => 'required|string',
         ]);
 
         $materi = Materi::findOrFail($id);
-        $materi->update($request->all());
+        $materi->update([
+            'title' => $request->title,
+            'video_url' => $request->video_url,
+            'description' => $request->description,
+        ]);
 
-        return redirect()->route('materis.index')->with('success', 'Materi berhasil diperbarui!');
+        return redirect()->route('materis.show', $materi->id)->with('success', 'Materi berhasil diperbarui!');
     }
 
     // 6. HAPUS MATERI

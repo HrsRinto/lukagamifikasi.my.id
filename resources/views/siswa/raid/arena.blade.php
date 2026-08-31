@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-slate-900">
     {{-- CSS KHUSUS UNTUK ANIMASI (RINGAN) --}}
     <style>
         /* Animasi Boss Bernafas (Idle) */
@@ -92,7 +92,7 @@
         </div>
 
         {{-- AREA SOAL --}}
-        <div id="quiz-area" class="w-full max-w-2xl bg-white text-gray-900 rounded-3xl shadow-2xl p-6 relative z-10 border-b-8 border-gray-300 transition-transform duration-200">
+        <div id="quiz-area" class="w-full max-w-5xl bg-white text-gray-900 rounded-3xl shadow-2xl p-6 relative z-10 border-b-8 border-gray-300 transition-transform duration-200">
 
             {{-- Header Soal --}}
             <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-gray-100">
@@ -101,23 +101,26 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-gray-400 font-bold uppercase">Waktu</span>
-                    <span id="timer" class="font-mono font-black text-2xl text-red-600 bg-red-50 px-2 rounded w-12 text-center">30</span>
+                    <span id="timer" class="font-mono font-black text-2xl text-red-600 bg-red-50 px-2 rounded w-12 text-center">{{ $event->timer_seconds ?? 30 }}</span>
                 </div>
             </div>
 
-            {{-- Pertanyaan --}}
-            <div id="question-container" class="min-h-[100px] flex items-center mb-6">
-                <div id="question-text" class="text-lg md:text-xl font-bold text-gray-800 leading-relaxed w-full">
-                    <div class="flex items-center gap-2 animate-pulse text-gray-400">
-                        <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <span>Mengunduh data intelijen...</span>
+            {{-- Main Layout: Kiri Soal, Kanan Opsi --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                {{-- Pertanyaan --}}
+                <div id="question-container" class="min-h-[120px] flex items-center bg-slate-50/80 p-5 rounded-2xl border border-slate-100 w-full">
+                    <div id="question-text" class="text-lg md:text-xl font-bold text-gray-800 leading-relaxed w-full">
+                        <div class="flex items-center gap-2 animate-pulse text-gray-400">
+                            <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span>Mengunduh data intelijen...</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Opsi Jawaban --}}
-            <div id="options-grid" class="grid grid-cols-1 gap-3">
+                {{-- Opsi Jawaban (2x2 Grid) --}}
+                <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-2 sm:grid-flow-col gap-3">
                 </div>
+            </div>
         </div>
 
     </div>
@@ -128,10 +131,38 @@
         let currentSoalId = null;
         let timerInterval;
         let totalHP = {{ $event->total_hp }};
+        let currentHP = {{ $event->current_hp }};
+        
+        // Audio Effects
+        const audioBenar = new Audio("{{ asset('audio/benar.mp3') }}");
+        audioBenar.preload = "auto";
+        const audioSalah = new Audio("{{ asset('audio/salah.mp3') }}");
+        audioSalah.preload = "auto";
+
+        // Unlock audio context on first user interaction to allow playing inside async fetch
+        const unlockAudio = () => {
+            audioBenar.muted = true;
+            audioSalah.muted = true;
+
+            audioBenar.play().then(() => {
+                audioBenar.pause();
+                audioBenar.muted = false;
+                audioBenar.currentTime = 0;
+            }).catch(e => console.log("Unlock audioBenar:", e));
+
+            audioSalah.play().then(() => {
+                audioSalah.pause();
+                audioSalah.muted = false;
+                audioSalah.currentTime = 0;
+            }).catch(e => console.log("Unlock audioSalah:", e));
+        };
+        // Bind to multiple events with once: true
+        document.addEventListener('click', unlockAudio, { once: true });
+        document.addEventListener('touchstart', unlockAudio, { once: true });
 
         // --- FUNGSI EFEK VISUAL --- //
 
-        function playHitEffect() {
+        function playHitEffect(damage = 1) {
             const bossAvatar = document.getElementById('boss-avatar');
             const damageContainer = document.getElementById('damage-container');
             const flash = document.getElementById('boss-flash');
@@ -153,7 +184,7 @@
             // 4. Floating Damage Text
             const damageEl = document.createElement('div');
             damageEl.classList.add('damage-text');
-            damageEl.innerText = "-1 HP";
+            damageEl.innerText = `-${damage} HP`;
             // Random posisi sedikit biar natural
             damageEl.style.left = (50 + (Math.random() * 40 - 20)) + '%';
             damageEl.style.top = '10%';
@@ -230,7 +261,7 @@
         }
 
         function startTimer() {
-            let timeLeft = 30;
+            let timeLeft = {{ $event->timer_seconds ?? 30 }};
             const timerEl = document.getElementById('timer');
             timerEl.innerText = timeLeft;
             clearInterval(timerInterval);
@@ -248,6 +279,8 @@
 
                 if(timeLeft <= 0) {
                     clearInterval(timerInterval);
+                    audioSalah.currentTime = 0;
+                    audioSalah.play().catch(e => console.log("Audio play error:", e));
                     playMissEffect(); // Efek salah/waktu habis
                     Swal.fire({
                         icon: 'warning',
@@ -279,6 +312,10 @@
             .then(res => res.json())
             .then(data => {
                 if(data.result === 'hit' || data.result === 'kill') {
+                    // Play audio benar
+                    audioBenar.currentTime = 0;
+                    audioBenar.play().catch(e => console.log("Audio play error:", e));
+                    
                     // JALANKAN ANIMASI HIT
                     playHitEffect();
 
@@ -286,6 +323,9 @@
                     let hpPercent = (data.hp / totalHP) * 100;
                     document.getElementById('boss-hp-text').innerText = data.hp + " / " + totalHP + " HP";
                     document.getElementById('boss-hp-bar').style.width = hpPercent + "%";
+
+                    // Update local currentHP
+                    currentHP = data.hp;
 
                     // Feedback Kecil (Toast)
                     const Toast = Swal.mixin({
@@ -306,6 +346,10 @@
                     })
 
                 } else {
+                    // Play audio salah
+                    audioSalah.currentTime = 0;
+                    audioSalah.play().catch(e => console.log("Audio play error:", e));
+
                     // JALANKAN ANIMASI MISS
                     playMissEffect();
 
@@ -335,26 +379,37 @@
         // Mulai Game
         loadSoal();
 
-        // Polling HP Boss untuk Sinkronisasi Real-time (Setiap 4 detik)
+        // Polling HP Boss untuk Sinkronisasi Real-time (Setiap 1.5 detik)
         function syncBossHP() {
             fetch("{{ route('siswa.raid.get_hp') }}")
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === 'finished') {
+                    if (data.status !== 'live') {
                         window.location.reload();
                         return;
                     }
 
-                    // Update UI HP Bar
-                    let hpPercent = (data.hp / data.total) * 100;
-                    document.getElementById('boss-hp-text').innerText = data.hp + " / " + data.total + " HP";
-                    document.getElementById('boss-hp-bar').style.width = hpPercent + "%";
-                    
-                    // Update total HP jika berubah
+                    // Check if Boss HP decreased due to other students' hits
+                    if (data.hp < currentHP) {
+                        let damage = currentHP - data.hp;
+                        playHitEffect(damage);
+                        
+                        // Play audio benar
+                        audioBenar.currentTime = 0;
+                        audioBenar.play().catch(e => console.log("Audio play error:", e));
+                    }
+
+                    // Update local currentHP and totalHP
+                    currentHP = data.hp;
                     totalHP = data.total;
+
+                    // Update UI HP Bar
+                    let hpPercent = (currentHP / totalHP) * 100;
+                    document.getElementById('boss-hp-text').innerText = currentHP + " / " + totalHP + " HP";
+                    document.getElementById('boss-hp-bar').style.width = hpPercent + "%";
                 });
         }
 
-        setInterval(syncBossHP, 4000);
+        setInterval(syncBossHP, 3000);
     </script>
 </x-app-layout>

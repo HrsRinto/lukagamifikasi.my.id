@@ -157,15 +157,16 @@ class SoalController extends Controller
             'points'         => $poin,
         ]);
 
-        // Redirect tetap ke index sesuai permintaanmu
-        // (Pastikan route 'soals.index' memang ada di web.php, jika error ganti ke 'materis.index')
-        return redirect()->route('soals.index')->with('success', 'Soal berhasil diperbarui!');
+        // Redirect kembali ke halaman detail materi (materis.show) agar langsung mengelola materi & soal terkait
+        return redirect()->route('materis.show', $soal->materi_id)->with('success', 'Soal berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         $soal = Soal::findOrFail($id);
+        $materi_id = $soal->materi_id;
         $soal->delete();
-        return redirect()->route('soals.index')->with('success', 'Soal dihapus!');
+        // Redirect kembali ke halaman detail materi (materis.show)
+        return redirect()->route('materis.show', $materi_id)->with('success', 'Soal berhasil dihapus!');
     }
 }

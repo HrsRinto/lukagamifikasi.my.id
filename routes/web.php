@@ -11,6 +11,7 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\SoalController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\RaidController;
+use App\Http\Controllers\ShopItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('soals', SoalController::class);
 
     // Leaderboard
-    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
 
     // Route Khusus Upload Foto
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
@@ -80,46 +81,43 @@ Route::middleware('auth')->group(function () {
     Route::get('/materi/{id}', [SiswaController::class, 'showMateri'])->name('siswa.materi.show');
     Route::post('/materi/{id}/complete', [SiswaController::class, 'completeMateri'])->name('siswa.materi.complete');
     Route::get('/siswa/leaderboard', [SiswaController::class, 'leaderboard'])->name('siswa.leaderboard');
-    Route::get('/siswa/materi/{id}/kuis', [App\Http\Controllers\SiswaController::class, 'showKuis'])->name('siswa.materi.kuis');
-    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard');
-    Route::get('/siswa/materi/{id}/kuis', [SiswaController::class, 'showKuis'])->name('siswa.kuis.show');
-    Route::post('/siswa/materi/{id}/kuis', [SiswaController::class, 'submitKuis'])->name('siswa.kuis.submit');
-    Route::resource('shop-guru', \App\Http\Controllers\ShopItemController::class);
-    Route::post('/shop/buy/{id}', [SiswaController::class, 'buyShopItem'])->name('siswa.shop.buy');
+    
     Route::get('/materi/{id}/peraturan-kuis', [SiswaController::class, 'preKuis'])->name('siswa.kuis.pre');
     Route::get('/materi/{id}/kuis', [SiswaController::class, 'showKuis'])->name('siswa.kuis.show');
+    Route::post('/materi/{id}/kuis', [SiswaController::class, 'submitKuis'])->name('siswa.kuis.submit');
     Route::get('/materi/{id}/hasil', [SiswaController::class, 'hasilKuis'])->name('siswa.kuis.hasil');
 
+    Route::post('/shop/buy/{id}', [SiswaController::class, 'buyShopItem'])->name('siswa.shop.buy');
 
     // RAID SYSTEM
-Route::prefix('raid')->name('siswa.raid.')->group(function () {
-    Route::get('/', [RaidController::class, 'indexSiswa'])->name('index');
-    Route::get('/lobby-data', [RaidController::class, 'getLobbyData'])->name('lobby_data'); // AJAX Polling
-    Route::get('/get-soal', [RaidController::class, 'getSoal'])->name('get_soal');
-    Route::get('/get-hp', [RaidController::class, 'getBossHP'])->name('get_hp');
-    Route::post('/attack', [RaidController::class, 'attackBoss'])->name('attack');
-});
+    Route::prefix('raid')->name('siswa.raid.')->group(function () {
+        Route::get('/', [RaidController::class, 'indexSiswa'])->name('index');
+        Route::get('/lobby-data', [RaidController::class, 'getLobbyData'])->name('lobby_data'); // AJAX Polling
+        Route::get('/get-soal', [RaidController::class, 'getSoal'])->name('get_soal');
+        Route::get('/get-hp', [RaidController::class, 'getBossHP'])->name('get_hp');
+        Route::post('/attack', [RaidController::class, 'attackBoss'])->name('attack');
+    });
 
-Route::group(['prefix' => 'shop-guru', 'as' => 'shop-guru.', 'middleware' => ['auth', 'role:guru']], function () {
-    Route::get('/', [ShopItemController::class, 'index'])->name('index');
-    Route::post('/', [ShopItemController::class, 'store'])->name('store');
-    Route::patch('/{id}', [ShopItemController::class, 'update'])->name('update');
-    Route::delete('/{id}', [ShopItemController::class, 'destroy'])->name('destroy');
-});
+    Route::group(['prefix' => 'shop-guru', 'as' => 'shop-guru.', 'middleware' => ['role:guru']], function () {
+        Route::get('/', [ShopItemController::class, 'index'])->name('index');
+        Route::post('/', [ShopItemController::class, 'store'])->name('store');
+        Route::patch('/{id}', [ShopItemController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ShopItemController::class, 'destroy'])->name('destroy');
+    });
 
-Route::prefix('guru/raid')->name('guru.raid.')->group(function () {
-    Route::get('/', [RaidController::class, 'indexGuru'])->name('index');
-    Route::post('/update-status', [RaidController::class, 'updateStatus'])->name('update_status');
-    Route::post('/store-soal', [RaidController::class, 'storeSoal'])->name('store_soal');
-    Route::delete('/soal/{id}', [RaidController::class, 'destroySoal'])->name('destroy_soal');
-    Route::post('/reset', [RaidController::class, 'resetEvent'])->name('reset');
-    Route::post('/import/{id}', [RaidController::class, 'importSoal'])->name('import_soal');
-    Route::post('/update-timer', [RaidController::class, 'updateTimer'])->name('update_timer');
+    Route::group(['prefix' => 'guru/raid', 'as' => 'guru.raid.', 'middleware' => ['role:guru']], function () {
+        Route::get('/', [RaidController::class, 'indexGuru'])->name('index');
+        Route::post('/update-status', [RaidController::class, 'updateStatus'])->name('update_status');
+        Route::post('/store-soal', [RaidController::class, 'storeSoal'])->name('store_soal');
+        Route::delete('/soal/{id}', [RaidController::class, 'destroySoal'])->name('destroy_soal');
+        Route::post('/reset', [RaidController::class, 'resetEvent'])->name('reset');
+        Route::post('/import/{id}', [RaidController::class, 'importSoal'])->name('import_soal');
+        Route::post('/update-timer', [RaidController::class, 'updateTimer'])->name('update_timer');
 
-    Route::get('/monitor', [RaidController::class, 'monitor'])->name('monitor');
-    Route::post('/update-hp', [RaidController::class, 'updateBossHP'])->name('update_hp');
-    Route::get('/monitor-data', [RaidController::class, 'getMonitorData'])->name('get_monitor_data');
-});
+        Route::get('/monitor', [RaidController::class, 'monitor'])->name('monitor');
+        Route::post('/update-hp', [RaidController::class, 'updateBossHP'])->name('update_hp');
+        Route::get('/monitor-data', [RaidController::class, 'getMonitorData'])->name('get_monitor_data');
+    });
 
 
 });

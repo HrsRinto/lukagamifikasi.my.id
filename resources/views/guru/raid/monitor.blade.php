@@ -1,4 +1,46 @@
-<x-app-layout>
+<x-app-layout class="bg-slate-900">
+    {{-- CSS KHUSUS UNTUK ANIMASI (RINGAN) --}}
+    <style>
+        /* Animasi Boss Bernafas (Idle) */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .boss-idle {
+            animation: breathe 3s infinite ease-in-out;
+        }
+
+        /* Animasi Kena Hit (Bergetar Merah) */
+        @keyframes shake-red {
+            0% { transform: translate(1px, 1px) rotate(0deg); filter: sepia(0); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); filter: sepia(1) hue-rotate(-50deg) saturate(5); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); filter: sepia(0); }
+        }
+        .boss-hit {
+            animation: shake-red 0.5s;
+        }
+
+        /* Animasi Angka Damage Melayang */
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+        }
+        .damage-text {
+            position: absolute;
+            color: #ffcc00; /* Warna Emas */
+            font-weight: 900;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 50;
+        }
+    </style>
     <div class="min-h-screen bg-slate-900 text-white p-6 flex flex-col items-center justify-center relative overflow-hidden">
 
         {{-- Background Effect --}}
@@ -21,12 +63,18 @@
                     {{-- Avatar Boss --}}
                     <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 group">
                         <div class="absolute inset-0 bg-red-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-pulse"></div>
-                        <img src="{{ asset('img/bos_mafia.png') }}"
-                             alt="Boss Mafia"
-                             class="w-full h-full object-cover rounded-full border-4 border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)] transform group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border border-red-400 shadow-sm whitespace-nowrap tracking-wider">
+                        <div id="boss-avatar" class="w-full h-full bg-gray-800 rounded-full border-4 border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.6)] overflow-hidden boss-idle relative">
+                            <img src="{{ asset('img/bos_mafia.png') }}"
+                                 alt="Boss Mafia"
+                                 class="w-full h-full object-cover">
+                            {{-- Efek Mata Merah (Overlay) --}}
+                            <div class="absolute inset-0 bg-red-500 mix-blend-overlay opacity-0 transition-opacity duration-100" id="boss-flash"></div>
+                        </div>
+                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border border-red-400 shadow-sm whitespace-nowrap tracking-wider relative z-20">
                             TARGET UTAMA
                         </div>
+                        {{-- Tempat Muncul Angka Damage --}}
+                        <div id="damage-container" class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none"></div>
                     </div>
 
                     {{-- Nama Boss --}}
@@ -80,10 +128,48 @@
             </div>
 
         </div>
-    </div>
-
-    {{-- SCRIPT AJAX LOBBY --}}
+        {{-- SCRIPT AJAX LOBBY --}}
     <script>
+        let currentHP = {{ $event->current_hp }};
+
+        function playHitEffect(damage = 1) {
+            const bossAvatar = document.getElementById('boss-avatar');
+            const damageContainer = document.getElementById('damage-container');
+            const flash = document.getElementById('boss-flash');
+            if (!bossAvatar) return;
+
+            // 1. Shake Boss
+            bossAvatar.classList.remove('boss-idle');
+            bossAvatar.classList.add('boss-hit');
+
+            // 2. Flash Merah
+            if (flash) {
+                flash.style.opacity = '0.8';
+                setTimeout(() => flash.style.opacity = '0', 100);
+            }
+
+            // 3. Reset Animation
+            setTimeout(() => {
+                bossAvatar.classList.remove('boss-hit');
+                bossAvatar.classList.add('boss-idle');
+            }, 500);
+
+            // 4. Floating Damage Text
+            if (damageContainer) {
+                const damageEl = document.createElement('div');
+                damageEl.classList.add('damage-text');
+                damageEl.innerText = `-${damage} HP`;
+                damageEl.style.left = (50 + (Math.random() * 40 - 20)) + '%';
+                damageEl.style.top = '10%';
+
+                damageContainer.appendChild(damageEl);
+
+                setTimeout(() => {
+                    damageEl.remove();
+                }, 1000);
+            }
+        }
+
         function updateMonitor() {
             fetch("{{ route('guru.raid.get_monitor_data') }}")
                 .then(response => response.json())
@@ -101,14 +187,21 @@
                         badge.className = "inline-block py-1 px-3 rounded bg-green-500/20 text-green-500 text-xs font-bold tracking-widest border border-green-500/50 mb-6";
                     }
 
-                    // 2. Update Boss HP
+                    // 2. Check if Boss HP decreased to play hit animations on big screen
+                    if (data.status === 'live' && data.current_hp < currentHP) {
+                        let damage = currentHP - data.current_hp;
+                        playHitEffect(damage);
+                    }
+                    currentHP = data.current_hp;
+
+                    // 3. Update Boss HP
                     if(data.total_hp > 0) {
                         let percent = (data.current_hp / data.total_hp) * 100;
                         document.getElementById('hp-bar').style.width = percent + "%";
                         document.getElementById('hp-text').innerText = data.current_hp + " / " + data.total_hp + " HP";
                     }
 
-                    // 3. Render Participants
+                    // 4. Render Participants
                     let html = '';
                     if(data.participants.length > 0){
                         data.participants.forEach(p => {
@@ -116,7 +209,7 @@
                                 <div class="group relative bg-slate-800 border-2 border-slate-700 rounded-xl p-4 flex flex-col items-center transition-all hover:border-red-500 hover:bg-slate-700 hover:-translate-y-1">
                                     <div class="relative">
                                         <img src="${p.user.photo_url}?t=${new Date().getTime()}"
-                                            class="w-16 h-16 rounded-full mb-3 border-2 border-white shadow-lg object-cover">
+                                             class="w-16 h-16 rounded-full mb-3 border-2 border-white shadow-lg object-cover">
                                         <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full animate-pulse"></span>
                                     </div>
                                     <span class="font-bold text-sm text-white truncate w-full text-center">${p.user.name}</span>
@@ -138,7 +231,7 @@
         // Panggil pertama kali
         updateMonitor();
 
-        // Ulangi setiap 2 detik (Lebih cepat untuk Guru)
-        setInterval(updateMonitor, 2000);
+        // Ulangi setiap 1.5 detik (Lebih cepat untuk Guru)
+        setInterval(updateMonitor, 3000);
     </script>
 </x-app-layout>

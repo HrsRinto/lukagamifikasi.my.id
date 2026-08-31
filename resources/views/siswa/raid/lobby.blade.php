@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-slate-900">
     <div class="min-h-screen bg-slate-900 text-white p-6 flex flex-col items-center justify-center relative overflow-hidden">
 
         {{-- Background Effect --}}
@@ -17,9 +17,11 @@
                 <div class="flex flex-col items-center justify-center mb-6">
                     {{-- Avatar Boss --}}
                     <div class="relative w-32 h-32 md:w-40 md:h-40 mb-4 group">
-                        <div class="absolute inset-0 bg-red-600 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-                        <img src="{{ asset('img/bos_mafia.png') }}" alt="Boss Mafia" class="w-full h-full object-cover rounded-full border-4 border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)] transform group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border border-red-400 shadow-sm whitespace-nowrap tracking-wider">
+                        {{-- Aura Merah Menyala (Pulsating Red Glow) --}}
+                        <div class="absolute -inset-4 bg-red-600 rounded-full blur-2xl opacity-70 animate-pulse"></div>
+                        <div class="absolute -inset-1 bg-red-500 rounded-full blur-xl opacity-90 animate-pulse" style="animation-delay: 0.5s;"></div>
+                        <img src="{{ asset('img/bos_mafia.png') }}" alt="Boss Mafia" class="w-full h-full object-cover rounded-full border-4 border-red-500 shadow-[0_0_40px_rgba(239,68,68,1)] transform group-hover:scale-105 transition-transform duration-500 relative z-10">
+                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-0.5 rounded-full border border-red-400 shadow-sm whitespace-nowrap tracking-wider z-20">
                             TARGET UTAMA
                         </div>
                     </div>
@@ -65,14 +67,30 @@
 
     {{-- SCRIPT KHUSUS SISWA --}}
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = new Audio("{{ asset('audio/lobby_event.mp3') }}");
+            audio.volume = 0.5;
+            audio.loop = false;
+            audio.play().catch(error => {
+                console.log("Audio play blocked by browser policy:", error);
+                const playAudio = () => {
+                    audio.play().catch(e => console.log(e));
+                    document.removeEventListener('click', playAudio);
+                    document.removeEventListener('touchstart', playAudio);
+                };
+                document.addEventListener('click', playAudio);
+                document.addEventListener('touchstart', playAudio);
+            });
+        });
+
         function updateLobby() {
             // PERBAIKAN: Menggunakan route SISWA (siswa.raid.lobby_data)
             // Bukan guru.raid.get_monitor_data
             fetch("{{ route('siswa.raid.lobby_data') }}")
                 .then(response => response.json())
                 .then(data => {
-                    // 1. Cek jika perang dimulai
-                    if (data.status === 'live') {
+                    // 1. Cek jika perang dimulai atau status berubah
+                    if (data.status !== 'lobby') {
                         window.location.reload();
                         return;
                     }
@@ -90,20 +108,22 @@
                     let html = '';
                     if(data.players.length > 0){
                         data.players.forEach(player => {
-                            // Cek apakah ada foto profil di objek user
-                            let photoUrl = player.user.photo_url || `https://ui-avatars.com/api/?name=${player.user.name}&background=random&color=fff`;
+                            if (player.user) {
+                                // Cek apakah ada foto profil di objek user
+                                let photoUrl = player.user.photo_url || "{{ asset('img/maskot_nav.png') }}";
 
-                            html += `
-                                <div class="group relative bg-slate-800 border-2 border-slate-700 rounded-xl p-4 flex flex-col items-center transition-all hover:border-yellow-500 hover:bg-slate-700 hover:-translate-y-1">
-                                    <div class="relative">
-                                        <img src="${photoUrl}?t=${new Date().getTime()}"
-                                             class="w-16 h-16 rounded-full mb-3 border-2 border-white shadow-lg object-cover">
-                                        <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full animate-pulse"></span>
+                                html += `
+                                    <div class="group relative bg-slate-800 border-2 border-slate-700 rounded-xl p-4 flex flex-col items-center transition-all hover:border-yellow-500 hover:bg-slate-700 hover:-translate-y-1">
+                                        <div class="relative">
+                                            <img src="${photoUrl}?t=${new Date().getTime()}"
+                                                 class="w-16 h-16 rounded-full mb-3 border-2 border-white shadow-lg object-cover">
+                                            <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full animate-pulse"></span>
+                                        </div>
+                                        <span class="font-bold text-sm text-white truncate w-full text-center">${player.user.name}</span>
+                                        <span class="text-[10px] text-slate-400 font-mono mt-1 bg-black/30 px-2 rounded">READY</span>
                                     </div>
-                                    <span class="font-bold text-sm text-white truncate w-full text-center">${player.user.name}</span>
-                                    <span class="text-[10px] text-slate-400 font-mono mt-1 bg-black/30 px-2 rounded">READY</span>
-                                </div>
-                            `;
+                                `;
+                            }
                         });
                     } else {
                         html = '<div class="col-span-full text-center text-gray-500 italic py-8">Belum ada pasukan lain yang bergabung.</div>';
@@ -116,7 +136,7 @@
 
         // Jalankan update pertama kali
         updateLobby();
-        // Update setiap 3 detik
-        setInterval(updateLobby, 3000);
+        // Update setiap 1.5 detik
+        setInterval(updateLobby, 3500);
     </script>
 </x-app-layout>

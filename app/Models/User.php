@@ -124,6 +124,6 @@ class User extends Authenticatable
 
         return $this->profile_photo_path
             ? asset('storage/' . $this->profile_photo_path)
-            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=fff';
+            : asset('img/maskot_nav.png');
     }
 }

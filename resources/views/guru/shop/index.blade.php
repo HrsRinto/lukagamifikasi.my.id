@@ -17,7 +17,7 @@
                         </div>
                         <h1 class="text-4xl font-black mb-2 tracking-tight">Manajemen Bursa</h1>
                         <p class="text-slate-300 text-lg max-w-2xl font-light">
-                            Atur "barang dagangan" (privilese ujian) yang bisa dibeli siswa dengan XP mereka.
+                            Atur reward/privilese ujian yang akan didapatkan secara otomatis oleh 4 siswa teratas di leaderboard.
                         </p>
                     </div>
                     
@@ -52,11 +52,8 @@
 
                         <div class="p-6 flex-1">
                             <div class="flex justify-between items-start mb-4">
-                                <div class="bg-blue-100 text-blue-700 font-black px-3 py-1 rounded-lg text-sm">
-                                    {{ $item->price }} XP
-                                </div>
-                                <div class="{{ $item->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} font-bold px-3 py-1 rounded-full text-xs">
-                                    Stok: {{ $item->stock }}
+                                <div class="bg-indigo-100 text-indigo-700 font-black px-3 py-1 rounded-lg text-xs">
+                                    Peringkat ke-{{ $item->price }}
                                 </div>
                             </div>
                             
@@ -104,7 +101,7 @@
                                 <th class="px-8 py-4 font-bold">Waktu</th>
                                 <th class="px-6 py-4 font-bold">Nama Siswa</th>
                                 <th class="px-6 py-4 font-bold">Barang Dibeli</th>
-                                <th class="px-6 py-4 font-bold text-right">Harga (XP)</th>
+                                <th class="px-6 py-4 font-bold text-right">Tipe Claim</th>
                                 <th class="px-8 py-4 font-bold text-center">Status</th>
                             </tr>
                         </thead>
@@ -122,9 +119,9 @@
                                             {{ $trx->item?->name ?? 'Barang Terhapus' }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">
-                                                -{{ $trx->price_at_purchase }} XP
-                                            </span>
+                                             <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs font-bold">
+                                                 Leaderboard Reward
+                                             </span>
                                         </td>
                                         <td class="px-8 py-4 text-center">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -159,15 +156,10 @@
                             <label class="block text-sm font-bold text-gray-700 mb-1">Nama Barang</label>
                             <input type="text" name="name" required class="w-full rounded-lg border-gray-300" placeholder="Voucher Diskon">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Harga (XP)</label>
-                                <input type="number" name="price" required class="w-full rounded-lg border-gray-300">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Stok</label>
-                                <input type="number" name="stock" required class="w-full rounded-lg border-gray-300">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Peringkat Sasaran (1-4)</label>
+                            <input type="number" name="price" required min="1" max="4" class="w-full rounded-lg border-gray-300" placeholder="Contoh: 1 untuk Peringkat 1">
+                            <input type="hidden" name="stock" value="9999">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Link Foto (Image URL)</label>
@@ -204,15 +196,10 @@
                             <label class="block text-sm font-bold text-gray-700 mb-1">Nama Barang</label>
                             <input type="text" name="name" x-model="editItem.name" required class="w-full rounded-lg border-gray-300">
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Harga (XP)</label>
-                                <input type="number" name="price" x-model="editItem.price" required class="w-full rounded-lg border-gray-300">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Stok</label>
-                                <input type="number" name="stock" x-model="editItem.stock" required class="w-full rounded-lg border-gray-300">
-                            </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Peringkat Sasaran (1-4)</label>
+                            <input type="number" name="price" x-model="editItem.price" required min="1" max="4" class="w-full rounded-lg border-gray-300">
+                            <input type="hidden" name="stock" value="9999">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Link Foto (Image URL)</label>

@@ -114,10 +114,38 @@ class SiswaController extends Controller
                             ->take(5)
                             ->get();
 
-        // Shop Items (Hanya yang aktif)
-        $shopItems = ShopItem::where('is_active', true)->get();
+        // Cari Rank User login saat ini
+        $allSiswa = User::where('role', 'siswa')
+                        ->orderBy('points', 'desc')
+                        ->get();
 
-        return view('siswa.dashboard', compact('user', 'materis', 'leaderboard', 'shopItems'));
+        $userRank = 0;
+        foreach ($allSiswa as $index => $s) {
+            if ($s->id === $user->id) {
+                $userRank = $index + 1;
+                break;
+            }
+        }
+
+        // Shop Items (Maksimal 4 item aktif untuk peringkat 1-4)
+        $shopItems = ShopItem::where('is_active', true)->orderBy('price', 'asc')->take(4)->get();
+        foreach ($shopItems as $item) {
+            $item->assigned_rank = $item->price;
+            $item->has_claimed = ShopTransaction::where('user_id', $user->id)
+                                                ->where('shop_item_id', $item->id)
+                                                ->exists();
+        }
+
+        // Ambil data event spesial untuk status lobby di dashboard
+        $raidEvent = \App\Models\RaidEvent::first();
+        $raidParticipants = collect();
+        if ($raidEvent) {
+            $raidParticipants = \App\Models\RaidParticipant::where('raid_event_id', $raidEvent->id)
+                                                           ->with('user')
+                                                           ->get();
+        }
+
+        return view('siswa.dashboard', compact('user', 'materis', 'leaderboard', 'shopItems', 'userRank', 'raidEvent', 'raidParticipants'));
     }
 
     public function buyShopItem(Request $request, $itemId)
@@ -125,39 +153,65 @@ class SiswaController extends Controller
         $user = Auth::user();
         $item = ShopItem::findOrFail($itemId);
 
-        // Validasi Stok
-        if ($item->stock <= 0) {
-            return redirect()->back()->with('error', 'Stok barang ini sudah habis! 😭');
+        // Validasi Event Selesai
+        $raidEvent = \App\Models\RaidEvent::first();
+        if (!$raidEvent || $raidEvent->status !== 'finished') {
+            return redirect()->back()->with('error', 'Bursa Privilese baru dibuka setelah Event Khusus selesai! 🕒');
         }
 
-        // Validasi Saldo
-        if ($user->points < $item->price) {
-            return redirect()->back()->with('error', 'XP kamu tidak cukup! Ayo kumpulkan lagi! 💪');
+        // Cari Rank User login
+        $allSiswa = User::where('role', 'siswa')
+                        ->orderBy('points', 'desc')
+                        ->get();
+
+        $userRank = 0;
+        foreach ($allSiswa as $index => $s) {
+            if ($s->id === $user->id) {
+                $userRank = $index + 1;
+                break;
+            }
         }
 
-        // Proses Transaksi Aman
+        // Cari assigned rank untuk item ini
+        $assignedRank = $item->price;
+
+        if ($assignedRank === null || $assignedRank < 1 || $assignedRank > 4) {
+            return redirect()->back()->with('error', 'Reward ini tidak memiliki peringkat sasaran yang valid.');
+        }
+
+        // Validasi Rank
+        if ($userRank !== $assignedRank) {
+            return redirect()->back()->with('error', 'Peringkat kamu saat ini adalah ke-' . $userRank . '. Reward ini hanya untuk Peringkat ke-' . $assignedRank . '! 💪');
+        }
+
+        // Validasi Klaim Ganda
+        $hasClaimed = ShopTransaction::where('user_id', $user->id)
+                                     ->where('shop_item_id', $item->id)
+                                     ->exists();
+        if ($hasClaimed) {
+            return redirect()->back()->with('error', 'Kamu sudah mengklaim reward ini! 🎁');
+        }
+
+        // Proses Transaksi Aman (Tanpa Potong Poin)
         DB::beginTransaction();
         try {
-            // 1. Potong Poin Siswa
-            $user->decrement('points', $item->price);
-
-            // 2. Kurangi Stok Barang
+            // 1. Kurangi Stok Barang
             $item->decrement('stock', 1);
 
-            // 3. Catat Riwayat Transaksi
+            // 2. Catat Riwayat Transaksi (Harga set 0 / gratis)
             ShopTransaction::create([
                 'user_id' => $user->id,
                 'shop_item_id' => $item->id,
-                'price_at_purchase' => $item->price,
+                'price_at_purchase' => 0,
                 'status' => 'approved'
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Berhasil menukar ' . $item->price . ' XP dengan ' . $item->name . '! 🎉');
+            return redirect()->back()->with('success', 'Berhasil mengklaim reward: ' . $item->name . '! 🎉');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat transaksi.');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengklaim.');
         }
     }
 
@@ -176,6 +230,13 @@ class SiswaController extends Controller
         $user->materis()->syncWithoutDetaching([
             $materi->id => ['is_watched' => true]
         ]);
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Materi berhasil diselesaikan secara otomatis.'
+            ]);
+        }
 
         return redirect()->route('siswa.dashboard')->with('success', 'Selamat! Anda telah menyelesaikan materi ini. Kuis terbuka!');
     }

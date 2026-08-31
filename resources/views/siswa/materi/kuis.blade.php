@@ -137,6 +137,7 @@
         let timeLeft = timePerQuestion;
         let userAnswers = {};
         let isProcessing = false;
+        let countdownAudio = null;
 
         document.addEventListener("DOMContentLoaded", function() {
             const loading = document.getElementById("loading-state");
@@ -238,6 +239,12 @@
 
             userAnswers[questionId] = selectedKey;
 
+            // Pause countdown audio when an option is selected
+            if (countdownAudio) {
+                countdownAudio.pause();
+                countdownAudio = null;
+            }
+
             // Disable semua opsi
             document.querySelectorAll(".option-card").forEach(el => {
                 el.classList.add("pointer-events-none", "opacity-50", "grayscale"); // Efek disable
@@ -251,6 +258,9 @@
             let isCorrect = (selectedKey.toLowerCase() === correctKey.toLowerCase());
 
             if (isCorrect) {
+                // Play correct audio
+                new Audio("{{ asset('audio/benar.mp3') }}").play().catch(e => console.log("Audio play error:", e));
+
                 // Style Hijau (Benar)
                 element.classList.add("bg-green-50", "border-green-500");
                 const indicator = element.querySelector(".radio-indicator");
@@ -266,6 +276,9 @@
                 Toast.fire({ icon: 'success', title: 'Jawaban Benar!' });
 
             } else {
+                // Play incorrect audio
+                new Audio("{{ asset('audio/salah.mp3') }}").play().catch(e => console.log("Audio play error:", e));
+
                 // Style Merah (Salah) pada pilihan User
                 element.classList.add("bg-red-50", "border-red-500");
                 const indicator = element.querySelector(".radio-indicator");
@@ -317,6 +330,10 @@
                 updateTimerDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
+                    if (countdownAudio) {
+                        countdownAudio.pause();
+                        countdownAudio = null;
+                    }
                     Swal.fire({
                         icon: 'warning',
                         title: 'Waktu Habis!',
@@ -339,6 +356,21 @@
             const textDisplay = document.getElementById("timer-display");
             const icon = document.getElementById("timer-icon");
 
+            // Play countdown sound files for 10s and 5s
+            if (timeLeft === 10) {
+                if (countdownAudio) {
+                    countdownAudio.pause();
+                }
+                countdownAudio = new Audio("{{ asset('audio/10detik.mp3') }}");
+                countdownAudio.play().catch(e => console.log("Timer audio play error:", e));
+            } else if (timeLeft === 5) {
+                if (countdownAudio) {
+                    countdownAudio.pause();
+                }
+                countdownAudio = new Audio("{{ asset('audio/5detik.mp3') }}");
+                countdownAudio.play().catch(e => console.log("Timer audio play error:", e));
+            }
+
             if(timeLeft <= 10) {
                 container.classList.remove("bg-blue-50", "border-blue-100");
                 container.classList.add("bg-red-50", "border-red-500", "animate-pulse");
@@ -356,6 +388,10 @@
 
         function finishQuiz() {
             clearInterval(timerInterval);
+            if (countdownAudio) {
+                countdownAudio.pause();
+                countdownAudio = null;
+            }
 
             Swal.fire({
                 title: 'Kuis Selesai! 🎉',

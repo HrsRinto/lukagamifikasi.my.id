@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-gradient-to-br from-blue-600 to-indigo-900">
     {{-- SCRIPT EKSTERNAL (Canvas Confetti untuk efek meriah) --}}
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -54,7 +54,7 @@
                         </div>
                     </div>
 
-                    {{-- CARD 2: XP & PROGRESS --}}
+                    {{-- CARD 2: POIN & PROGRESS --}}
                     <div class="tilt-card relative overflow-hidden rounded-[2.5rem] bg-[#1e293b]/90 backdrop-blur-xl border border-white/10 p-8 shadow-2xl hover:border-yellow-500/30 transition-all duration-500 group">
                         {{-- Efek Glow --}}
                         <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-yellow-500/20 rounded-full blur-[60px] group-hover:bg-yellow-500/30 transition-all"></div>
@@ -63,10 +63,10 @@
                             {{-- Top Section --}}
                             <div class="flex justify-between items-start mb-6">
                                 <div>
-                                    <h3 class="text-yellow-500/80 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">TOTAL EXPERIENCE</h3>
+                                    <h3 class="text-yellow-500/80 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">TOTAL POIN</h3>
                                     <div class="flex items-baseline gap-1">
                                         <span class="text-5xl md:text-6xl font-black text-white tracking-tighter counter-value drop-shadow-lg" data-target="{{ $user->points }}">0</span>
-                                        <span class="text-xl font-bold text-yellow-500">XP</span>
+                                        <span class="text-xl font-bold text-yellow-500">Poin</span>
                                     </div>
                                 </div>
 
@@ -132,7 +132,7 @@
                         <div class="bg-yellow-400 w-1.5 h-10 rounded-full mr-4 shadow-[0_0_15px_rgba(250,204,21,0.6)] animate-pulse"></div>
                         <div>
                             <h3 class="text-3xl font-black text-white">Modul Pembelajaran</h3>
-                            <p class="text-blue-200 text-sm">Selesaikan misi untuk mendapatkan XP!</p>
+                            <p class="text-blue-200 text-sm">Selesaikan misi untuk mendapatkan Poin!</p>
                         </div>
                     </div>
 
@@ -220,75 +220,152 @@
                     </div>
                 </div>
 
-                {{-- SECTION: BURSA PREVILESE (SHOP) --}}
+                {{-- SECTION: EVENT KHUSUS (RAID BOSS) --}}
                 <div class="scroll-reveal">
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center">
-                            <div class="bg-indigo-500 w-1.5 h-10 rounded-full mr-4 shadow-[0_0_15px_rgba(99,102,241,0.6)] animate-pulse"></div>
+                            <div class="bg-red-500 w-1.5 h-10 rounded-full mr-4 shadow-[0_0_15px_rgba(239,68,68,0.6)] animate-pulse"></div>
                             <div>
-                                <h3 class="text-3xl font-black text-white uppercase tracking-tight">Bursa Previlese</h3>
-                                <p class="text-blue-200 text-sm">Tukarkan XP kamu dengan keuntungan spesial!</p>
+                                <h3 class="text-3xl font-black text-white uppercase tracking-tight">Raid Mafia Event</h3>
+                                <p class="text-blue-200 text-sm">Bekerjasama dengan teman sekelas untuk mengalahkan Boss Mafia!</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @forelse($shopItems as $item)
-                        <div class="tilt-card group relative overflow-hidden rounded-[2.5rem] bg-[#1e293b]/80 backdrop-blur-xl border border-white/10 p-1 shadow-2xl transition-all duration-500 hover:shadow-indigo-500/20">
-                            {{-- Image Container --}}
-                            <div class="h-48 rounded-[2rem] overflow-hidden relative">
-                                <img src="{{ filter_var($item->image, FILTER_VALIDATE_URL) ? $item->image : ($item->image ? asset('storage/' . $item->image) : 'https://images.unsplash.com/photo-1593642532400-2682810df593?q=80&w=500&auto=format&fit=crop') }}"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                <div class="absolute inset-0 bg-gradient-to-t from-[#1e293b] via-transparent to-transparent opacity-60"></div>
-                                
-                                {{-- Stock Badge --}}
-                                <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20">
-                                    STOK: {{ $item->stock }}
-                                </div>
-                            </div>
+                    <div class="max-w-3xl mx-auto">
+                        @php
+                            $eventStatus = isset($raidEvent) ? $raidEvent->status : 'closed';
+                            $isOpen = $eventStatus === 'lobby' || $eventStatus === 'live';
+                        @endphp
 
-                            <div class="p-6">
-                                <h4 class="text-xl font-bold text-white mb-2">{{ $item->name }}</h4>
-                                <p class="text-gray-400 text-sm line-clamp-2 mb-6 h-10">{{ $item->description }}</p>
-                                
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-2xl font-black text-yellow-400">{{ number_format($item->price) }}</span>
-                                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">XP</span>
+                        <div class="relative overflow-hidden rounded-[2.5rem] bg-[#1e293b]/90 backdrop-blur-xl border border-white/10 p-8 shadow-2xl transition-all duration-500 group">
+                            {{-- Glow Effect based on status --}}
+                            <div id="raid-glow" class="absolute -right-12 -top-12 w-60 h-60 rounded-full blur-[80px] transition-all duration-500 {{ $isOpen ? 'bg-emerald-500/20 animate-pulse' : 'bg-red-500/10' }}"></div>
+
+                            <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                                {{-- Icon / Graphic --}}
+                                <div id="raid-icon" class="w-28 h-28 flex-shrink-0 flex items-center justify-center rounded-3xl bg-slate-800/80 border border-white/10 shadow-lg overflow-hidden text-5xl">
+                                    @if($eventStatus === 'lobby' || $eventStatus === 'live')
+                                        <img src="{{ asset('img/bos_mafia.png') }}" alt="Boss Mafia" class="w-full h-full object-contain p-2">
+                                    @elseif($eventStatus === 'finished')
+                                        🏆
+                                    @else
+                                        🔒
+                                    @endif
+                                </div>
+
+                                {{-- Info --}}
+                                <div class="flex-1 text-center md:text-left">
+                                    <div class="flex flex-col md:flex-row md:items-center gap-2 mb-3 justify-center md:justify-start">
+                                        <span id="raid-status-badge" class="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all duration-300
+                                            @if($eventStatus === 'lobby') bg-emerald-500/20 text-emerald-400 border-emerald-500/30
+                                            @elseif($eventStatus === 'live') bg-red-500/20 text-red-400 border-red-500/30
+                                            @elseif($eventStatus === 'finished') bg-blue-500/20 text-blue-400 border-blue-500/30
+                                            @else bg-gray-500/20 text-gray-400 border-gray-500/30 @endif">
+                                            @if($eventStatus === 'lobby')
+                                                Lobby Dibuka
+                                            @elseif($eventStatus === 'live')
+                                                Event Live
+                                            @elseif($eventStatus === 'finished')
+                                                Event Selesai
+                                            @else
+                                                Lobby Terkunci
+                                            @endif
+                                        </span>
+                                        <span id="raid-boss-hp-tag" class="text-xs text-yellow-400 font-bold {{ $isOpen ? '' : 'hidden' }}">
+                                            @if(isset($raidEvent) && $isOpen)
+                                                Boss: {{ $raidEvent->mafia_name }} (HP: {{ $raidEvent->current_hp }}/{{ $raidEvent->total_hp }})
+                                            @endif
+                                        </span>
                                     </div>
 
-                                    <form action="{{ route('siswa.shop.buy', $item->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                {{ $user->points < $item->price || $item->stock <= 0 ? 'disabled' : '' }}>
-                                            TUKAR
-                                        </button>
-                                    </form>
+                                    <h4 id="raid-card-title" class="text-2xl font-black text-white mb-2">
+                                        @if($eventStatus === 'lobby')
+                                            Pintu Lobby Telah Terbuka!
+                                        @elseif($eventStatus === 'live')
+                                            Pertempuran Sedang Berlangsung!
+                                        @elseif($eventStatus === 'finished')
+                                            Pertempuran Telah Usai!
+                                        @else
+                                            Lobby Event Belum Dibuka
+                                        @endif
+                                    </h4>
+
+                                    <p id="raid-card-desc" class="text-gray-400 text-sm leading-relaxed mb-4">
+                                        @if($eventStatus === 'lobby')
+                                            Guru telah membuka lobby event. Segera masuk untuk bersiap-siap sebelum perang dimulai!
+                                        @elseif($eventStatus === 'live')
+                                            Raid Boss sedang berlangsung. Serang Boss bersama-sama untuk mendapatkan loot poin!
+                                        @elseif($eventStatus === 'finished')
+                                            Raid Boss berhasil dikalahkan. Silakan cek hasil klasemen akhir untuk melihat peringkat Anda.
+                                        @else
+                                            Lobby saat ini masih dikunci oleh Guru. Bersiaplah dan tunggu sampai Guru membuka akses lobby event!
+                                        @endif
+                                    </p>
+
+                                    {{-- Mengintip Partisipan Lobby (Avatar Stack) --}}
+                                    <div id="raid-participants-container" class="flex items-center gap-2 mb-6 justify-center md:justify-start {{ ($isOpen && isset($raidParticipants) && $raidParticipants->count() > 0) ? '' : 'hidden' }}">
+                                        <div id="raid-participants-avatars" class="flex -space-x-3 overflow-hidden">
+                                            @if(isset($raidParticipants))
+                                                @foreach($raidParticipants->take(6) as $p)
+                                                    @if($p->user)
+                                                        <img class="inline-block h-8 w-8 rounded-full ring-2 ring-slate-900 object-cover" 
+                                                             src="{{ $p->user->photo_url }}" 
+                                                             alt="{{ $p->user->name }}" 
+                                                             title="{{ $p->user->name }}">
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                        <span id="raid-participants-count" class="text-xs text-emerald-400 font-bold">
+                                            @if(isset($raidParticipants))
+                                                @if($raidParticipants->count() > 6)
+                                                    +{{ $raidParticipants->count() - 6 }} siswa lainnya di lobby
+                                                @else
+                                                    {{ $raidParticipants->count() }} siswa sudah bersiap
+                                                @endif
+                                            @endif
+                                        </span>
+                                    </div>
+
+                                    <div id="raid-action-button-container">
+                                        @if($isOpen)
+                                            <a href="{{ route('siswa.raid.index') }}"
+                                               class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-emerald-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
+                                                <span>Masuk Event</span>
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                                            </a>
+                                        @elseif($eventStatus === 'finished')
+                                            <a href="{{ route('siswa.raid.index') }}"
+                                               class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
+                                                <span>Lihat Hasil Event</span>
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                            </a>
+                                        @else
+                                            <button disabled
+                                                    class="inline-flex items-center gap-2 bg-slate-700 text-slate-400 font-bold py-3 px-8 rounded-2xl cursor-not-allowed">
+                                                <span>Lobby Terkunci</span>
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        @empty
-                        <div class="col-span-full py-20 text-center bg-white/5 rounded-[2.5rem] border border-dashed border-white/20">
-                            <span class="text-5xl mb-4 block">📦</span>
-                            <h4 class="text-xl font-bold text-white opacity-50">Toko sedang tutup. Kembali lagi nanti!</h4>
-                        </div>
-                        @endforelse
                     </div>
                 </div>
 
                 {{-- SECTION 2: LEADERBOARD TEASER --}}
                 <div class="relative scroll-reveal">
                     <div class="bg-gray-900 rounded-t-[2.5rem] p-8 md:p-10 flex flex-col md:flex-row justify-between items-center relative overflow-hidden shadow-2xl border-b border-gray-800 transform hover:scale-[1.01] transition duration-500">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
 
                         <div class="relative z-10 flex items-center gap-4 mb-4 md:mb-0">
                             <div class="w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20 rotate-3 animate-bounce-slow">
                                 <span class="text-3xl">🏆</span>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-black text-white">Klasemen Kelas</h3>
-                                <p class="text-gray-400 text-sm">Siapakah penguasa tahta minggu ini?</p>
+                                <h3 class="text-2xl font-black text-white">Leaderboard</h3>
+                                <p class="text-gray-400 text-sm">Siapakah Peringkat teratas?</p>
                             </div>
                         </div>
 
@@ -352,7 +429,7 @@
                                             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider">???</span>
                                         @else
                                             <span class="block font-black text-xl sm:text-2xl text-indigo-600">{{ number_format($s->points) }}</span>
-                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">XP</span>
+                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Poin</span>
                                         @endif
                                     </div>
                                 </div>
@@ -368,11 +445,13 @@
 
             {{-- FOOTER --}}
             <div class="text-center mt-16 pb-8 border-t border-white/10 pt-8">
-                <p class="text-blue-200 text-sm font-medium">Gamifikasi SMP Terang Mulia Purwokerto</p>
+                <p class="text-blue-200 text-sm font-medium">Gamifikasi PKBM Terang Mulia Purwokerto</p>
                 <div class="flex justify-center gap-4 mt-4 opacity-70 hover:opacity-100 transition">
-                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@STIKOMYOS</span></a>
+                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@stikomyos__</span></a>
                     <span class="text-white/30">•</span>
-                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@HIRONIMUS</span></a>
+                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@PKBM Terang Mulia</span></a>
+                    <span class="text-white/30">•</span>
+                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@hironimus_rintoo</span></a>
                 </div>
             </div>
 
@@ -412,6 +491,30 @@
         /* Cursor untuk type effect */
         .cursor-blink { animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Shop Deck CSS */
+        .shop-deck {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+        .shop-card {
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s ease, z-index 0.6s step-end, filter 0.6s ease;
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+        }
+        .shop-card.active {
+            z-index: 20 !important;
+            opacity: 1 !important;
+            filter: brightness(1) blur(0px);
+            pointer-events: auto;
+        }
+        .shop-card.inactive {
+            filter: brightness(0.6) blur(0.5px);
+            pointer-events: auto;
+        }
+        .shop-card.inactive * {
+            pointer-events: none;
+        }
     </style>
 
     {{-- SCRIPT JAVASCRIPT ANIMASI --}}
@@ -576,6 +679,275 @@
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             });
+
+            // 8. SHOP DECK CAROUSEL SYSTEM
+            const deckContainer = document.getElementById('shop-deck-container');
+            if (deckContainer) {
+                const cards = deckContainer.querySelectorAll('.shop-card');
+                const dots = document.querySelectorAll('[data-dot-index]');
+                const prevBtn = document.getElementById('prev-shop-btn');
+                const nextBtn = document.getElementById('next-shop-btn');
+                
+                let activeIndex = 0;
+                
+                // Find initial active index (middle card)
+                if (cards.length > 0) {
+                    activeIndex = Math.floor(cards.length / 2);
+                }
+
+                function updateDeck() {
+                    cards.forEach((card, idx) => {
+                        const diff = idx - activeIndex;
+                        
+                        // Active card
+                        if (diff === 0) {
+                            card.style.transform = 'translateX(0) scale(1.05) rotate(0deg) translateZ(50px)';
+                            card.style.zIndex = 20;
+                            card.style.opacity = 1;
+                            card.classList.add('active');
+                            card.classList.remove('inactive');
+                        } 
+                        // Left cards
+                        else if (diff < 0) {
+                            const offset = diff * 50; // translate amount
+                            const rotate = diff * 12; // rotate amount
+                            const scale = 1 - Math.abs(diff) * 0.08;
+                            card.style.transform = `translateX(${offset}px) scale(${scale}) rotate(${rotate}deg) translateZ(${diff * 10}px)`;
+                            card.style.zIndex = 20 + diff; // lower z-index
+                            card.style.opacity = Math.max(0.15, 1 - Math.abs(diff) * 0.25);
+                            card.classList.remove('active');
+                            card.classList.add('inactive');
+                        } 
+                        // Right cards
+                        else if (diff > 0) {
+                            const offset = diff * 50; // translate amount
+                            const rotate = diff * 12; // rotate amount
+                            const scale = 1 - Math.abs(diff) * 0.08;
+                            card.style.transform = `translateX(${offset}px) scale(${scale}) rotate(${rotate}deg) translateZ(${-diff * 10}px)`;
+                            card.style.zIndex = 20 - diff; // lower z-index
+                            card.style.opacity = Math.max(0.15, 1 - Math.abs(diff) * 0.25);
+                            card.classList.remove('active');
+                            card.classList.add('inactive');
+                        }
+                    });
+
+                    // Update dots
+                    dots.forEach((dot, idx) => {
+                        if (idx === activeIndex) {
+                            dot.classList.add('bg-indigo-500', 'w-6');
+                            dot.classList.remove('bg-white/20');
+                        } else {
+                            dot.classList.remove('bg-indigo-500', 'w-6');
+                            dot.classList.add('bg-white/20');
+                        }
+                    });
+                }
+
+                // Initial run
+                updateDeck();
+
+                // Button listeners
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        if (activeIndex > 0) {
+                            activeIndex--;
+                        } else {
+                            activeIndex = cards.length - 1;
+                        }
+                        updateDeck();
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        if (activeIndex < cards.length - 1) {
+                            activeIndex++;
+                        } else {
+                            activeIndex = 0;
+                        }
+                        updateDeck();
+                    });
+                }
+
+                // Click card to select
+                cards.forEach((card, idx) => {
+                    card.addEventListener('click', (e) => {
+                        if (card.classList.contains('active')) {
+                            return; // let button/form clicks pass through normally
+                        }
+                        
+                        e.preventDefault();
+                        e.stopPropagation();
+                        activeIndex = idx;
+                        updateDeck();
+                    });
+                });
+
+                // Dot click listener
+                dots.forEach((dot, idx) => {
+                    dot.addEventListener('click', () => {
+                        activeIndex = idx;
+                        updateDeck();
+                    });
+                });
+            }
+
+            // 9. RAID EVENT REAL-TIME POLLING FOR STUDENTS
+            let bossName = "{{ optional($raidEvent)->mafia_name ?? 'Don Corleone' }}";
+            let defaultMaskot = "{{ asset('img/maskot_nav.png') }}";
+            let raidIndexRoute = "{{ route('siswa.raid.index') }}";
+
+            function pollRaidStatus() {
+                fetch("{{ route('siswa.raid.lobby_data') }}")
+                    .then(res => res.json())
+                    .then(data => {
+                        const status = data.status || 'closed';
+                        const isOpen = status === 'lobby' || status === 'live';
+
+                        // Update Glow
+                        const glowEl = document.getElementById('raid-glow');
+                        if (glowEl) {
+                            if (isOpen) {
+                                glowEl.className = "absolute -right-12 -top-12 w-60 h-60 rounded-full blur-[80px] transition-all duration-500 bg-emerald-500/20 animate-pulse";
+                            } else {
+                                glowEl.className = "absolute -right-12 -top-12 w-60 h-60 rounded-full blur-[80px] transition-all duration-500 bg-red-500/10";
+                            }
+                        }
+
+                        // Update Icon
+                        const iconEl = document.getElementById('raid-icon');
+                        if (iconEl) {
+                            if (isOpen) {
+                                iconEl.innerHTML = `<img src="{{ asset('img/bos_mafia.png') }}" alt="Boss Mafia" class="w-full h-full object-contain p-2">`;
+                            } else if (status === 'finished') {
+                                iconEl.innerHTML = "🏆";
+                            } else {
+                                iconEl.innerHTML = "🔒";
+                            }
+                        }
+
+                        // Update Badge
+                        const badgeEl = document.getElementById('raid-status-badge');
+                        if (badgeEl) {
+                            if (status === 'lobby') {
+                                badgeEl.innerText = "Lobby Dibuka";
+                                badgeEl.className = "text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all duration-300 bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
+                            } else if (status === 'live') {
+                                badgeEl.innerText = "Event Live";
+                                badgeEl.className = "text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all duration-300 bg-red-500/20 text-red-400 border-red-500/30";
+                            } else if (status === 'finished') {
+                                badgeEl.innerText = "Event Selesai";
+                                badgeEl.className = "text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all duration-300 bg-blue-500/20 text-blue-400 border-blue-500/30";
+                            } else {
+                                badgeEl.innerText = "Lobby Terkunci";
+                                badgeEl.className = "text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all duration-300 bg-gray-500/20 text-gray-400 border-gray-500/30";
+                            }
+                        }
+
+                        // Update Boss HP Tag
+                        const hpTagEl = document.getElementById('raid-boss-hp-tag');
+                        if (hpTagEl) {
+                            if (isOpen) {
+                                hpTagEl.innerText = `Boss: ${bossName} (HP: ${data.current_hp}/${data.total_hp})`;
+                                hpTagEl.classList.remove('hidden');
+                            } else {
+                                hpTagEl.classList.add('hidden');
+                            }
+                        }
+
+                        // Update Title
+                        const titleEl = document.getElementById('raid-card-title');
+                        if (titleEl) {
+                            if (status === 'lobby') {
+                                titleEl.innerText = "Pintu Lobby Telah Terbuka!";
+                            } else if (status === 'live') {
+                                titleEl.innerText = "Pertempuran Sedang Berlangsung!";
+                            } else if (status === 'finished') {
+                                titleEl.innerText = "Pertempuran Telah Usai!";
+                            } else {
+                                titleEl.innerText = "Lobby Event Belum Dibuka";
+                            }
+                        }
+
+                        // Update Description
+                        const descEl = document.getElementById('raid-card-desc');
+                        if (descEl) {
+                            if (status === 'lobby') {
+                                descEl.innerText = "Guru telah membuka lobby event. Segera masuk untuk bersiap-siap sebelum perang dimulai!";
+                            } else if (status === 'live') {
+                                descEl.innerText = "Raid Boss sedang berlangsung. Serang Boss bersama-sama untuk mendapatkan loot poin!";
+                            } else if (status === 'finished') {
+                                descEl.innerText = "Raid Boss berhasil dikalahkan. Silakan cek hasil klasemen akhir untuk melihat peringkat Anda.";
+                            } else {
+                                descEl.innerText = "Lobby saat ini masih dikunci oleh Guru. Bersiaplah dan tunggu sampai Guru membuka akses lobby event!";
+                            }
+                        }
+
+                        // Update Participants Container
+                        const partContainer = document.getElementById('raid-participants-container');
+                        if (partContainer) {
+                            if (isOpen && data.players && data.players.length > 0) {
+                                partContainer.classList.remove('hidden');
+                                
+                                // Render avatars
+                                const avatarsEl = document.getElementById('raid-participants-avatars');
+                                if (avatarsEl) {
+                                    let avHtml = '';
+                                    data.players.slice(0, 6).forEach(p => {
+                                        let pUrl = p.user.photo_url || defaultMaskot;
+                                        avHtml += `<img class="inline-block h-8 w-8 rounded-full ring-2 ring-slate-900 object-cover" src="${pUrl}" alt="${p.user.name}" title="${p.user.name}">`;
+                                    });
+                                    avatarsEl.innerHTML = avHtml;
+                                }
+
+                                // Render count
+                                const countEl = document.getElementById('raid-participants-count');
+                                if (countEl) {
+                                    if (data.players.length > 6) {
+                                        countEl.innerText = `+${data.players.length - 6} siswa lainnya di lobby`;
+                                    } else {
+                                        countEl.innerText = `${data.players.length} siswa sudah bersiap`;
+                                    }
+                                }
+                            } else {
+                                partContainer.classList.add('hidden');
+                            }
+                        }
+
+                        // Update Action Button
+                        const btnContainer = document.getElementById('raid-action-button-container');
+                        if (btnContainer) {
+                            if (isOpen) {
+                                btnContainer.innerHTML = `
+                                    <a href="${raidIndexRoute}"
+                                       class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-emerald-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
+                                        <span>Masuk Event</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                                    </a>
+                                `;
+                            } else if (status === 'finished') {
+                                btnContainer.innerHTML = `
+                                    <a href="${raidIndexRoute}"
+                                       class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
+                                        <span>Lihat Hasil Event</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                    </a>
+                                `;
+                            } else {
+                                btnContainer.innerHTML = `
+                                    <button disabled
+                                            class="inline-flex items-center gap-2 bg-slate-700 text-slate-400 font-bold py-3 px-8 rounded-2xl cursor-not-allowed">
+                                        <span>Lobby Terkunci</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    </button>
+                                `;
+                            }
+                        }
+                    })
+                    .catch(e => console.error("Raid polling error:", e));
+            }
+
+            setInterval(pollRaidStatus, 4000);
         });
     </script>
 </x-app-layout>

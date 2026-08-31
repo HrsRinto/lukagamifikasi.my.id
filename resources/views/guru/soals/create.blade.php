@@ -49,7 +49,7 @@
                     {{-- PERTANYAAN --}}
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Pertanyaan</label>
-                        <textarea name="pertanyaan" rows="3" class="w-full border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="Tulis soal nomor {{ $nomor_soal }} di sini..." required autofocus></textarea>
+                        <textarea name="pertanyaan" rows="8" class="w-full border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="Tulis soal nomor {{ $nomor_soal }} di sini..." required autofocus></textarea>
                     </div>
 
                      {{-- PILIHAN GANDA --}}

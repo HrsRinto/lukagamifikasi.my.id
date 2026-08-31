@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout class="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950">
     {{-- Kita kosongkan slot header bawaan agar tidak merusak desain full-page --}}
 
     {{-- 1. IMPORT LIBRARY CONFETTI (Ringan & Cepat) --}}
@@ -88,8 +88,8 @@
                         </div>
 
                         <div class="text-center mt-5 mb-2">
-                            <h3 class="text-white font-bold text-sm md:text-base truncate w-28 md:w-32 mx-auto drop-shadow-sm">{{ $leaderboard[1]->name }}</h3>
-                            <p class="text-gray-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[1]->points) }} Pts</p>
+                            <h3 class="text-white font-bold text-sm md:text-base truncate w-full max-w-[110px] mx-auto drop-shadow-sm">{{ $leaderboard[1]->name }}</h3>
+                            <p class="text-gray-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[1]->points) }} Poin</p>
                         </div>
 
                         {{-- Tiang Podium Silver --}}
@@ -120,8 +120,8 @@
                         </div>
 
                         <div class="text-center mt-6 mb-2">
-                            <h3 class="text-white font-black text-lg truncate w-32 md:w-40 mx-auto drop-shadow-md tracking-wide">{{ $leaderboard[0]->name }}</h3>
-                            <p class="text-yellow-400 font-extrabold text-xl drop-shadow-sm">{{ number_format($leaderboard[0]->points) }} Pts</p>
+                            <h3 class="text-white font-black text-lg truncate w-full max-w-[130px] mx-auto drop-shadow-md tracking-wide">{{ $leaderboard[0]->name }}</h3>
+                            <p class="text-yellow-400 font-extrabold text-xl drop-shadow-sm">{{ number_format($leaderboard[0]->points) }} Poin</p>
                         </div>
 
                         {{-- Tiang Podium Gold --}}
@@ -148,8 +148,8 @@
                         </div>
 
                         <div class="text-center mt-5 mb-2">
-                            <h3 class="text-white font-bold text-sm md:text-base truncate w-28 md:w-32 mx-auto drop-shadow-sm">{{ $leaderboard[2]->name }}</h3>
-                            <p class="text-orange-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[2]->points) }} Pts</p>
+                            <h3 class="text-white font-bold text-sm md:text-base truncate w-full max-w-[110px] mx-auto drop-shadow-sm">{{ $leaderboard[2]->name }}</h3>
+                            <p class="text-orange-300 font-bold text-xs bg-white/10 px-2 py-0.5 rounded-full inline-block">{{ number_format($leaderboard[2]->points) }} Poin</p>
                         </div>
 
                         {{-- Tiang Podium Bronze --}}
@@ -194,7 +194,7 @@
 
                             <div class="text-right pl-2">
                                 <span class="block font-black text-slate-800 text-lg group-hover:text-cyan-600 transition-colors">{{ number_format($s->points) }}</span>
-                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">XP Total</span>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Poin Total</span>
                             </div>
 
                         </div>
@@ -214,6 +214,21 @@
     {{-- ========================================================= --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Audio Tepuk Tangan
+            const audio = new Audio("{{ asset('audio/tepuk_tangan.mp3') }}");
+            audio.volume = 0.6;
+            audio.play().catch(error => {
+                console.log("Autoplay audio blocked by browser policy:", error);
+                // Fallback: Play on first interaction if blocked
+                const playAudio = () => {
+                    audio.play().catch(e => console.log(e));
+                    document.removeEventListener('click', playAudio);
+                    document.removeEventListener('touchstart', playAudio);
+                };
+                document.addEventListener('click', playAudio);
+                document.addEventListener('touchstart', playAudio);
+            });
+
             // WARNA TEMA: Emas, Biru, Putih (Sesuai tema sekolah/dashboard)
             const colors = ['#FACC15', '#3B82F6', '#ffffff'];
 

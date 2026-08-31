@@ -8,7 +8,7 @@
                     <h1 class="text-3xl font-black text-gray-800 tracking-tight">Editor Soal</h1>
                     <p class="text-gray-500 text-sm mt-1">Perbarui konten materi dan kunci jawaban dengan mudah.</p>
                 </div>
-                <a href="{{ route('soals.index') }}" class="group inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-gray-600 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm">
+                <a href="{{ route('materis.show', $soal->materi_id) }}" class="group inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-bold text-gray-600 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm">
                     <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali
                 </a>
@@ -38,7 +38,7 @@
                                 {{-- INPUT PERTANYAAN --}}
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider text-xs">Pertanyaan Utama</label>
-                                    <textarea name="pertanyaan" rows="5" class="w-full border-gray-200 bg-gray-50 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base p-4 transition" placeholder="Tuliskan soal di sini..." required>{{ old('pertanyaan', $soal->pertanyaan ?? $soal->question) }}</textarea>
+                                    <textarea name="pertanyaan" rows="8" class="w-full border-gray-200 bg-gray-50 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base p-4 transition" placeholder="Tuliskan soal di sini..." required>{{ old('pertanyaan', $soal->pertanyaan ?? $soal->question) }}</textarea>
                                 </div>
 
                                 {{-- INPUT OPSI JAWABAN --}}

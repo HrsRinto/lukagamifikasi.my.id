@@ -79,7 +79,7 @@
             {{-- Info Card Bawah --}}
             <div class="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 text-blue-700 text-sm">
                 <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <p>Siswa akan otomatis mendapatkan Rank <strong>Bronze</strong> dan 0 XP saat pertama kali dibuat. Pastikan email unik dan password minimal 8 karakter.</p>
+                <p>Siswa akan otomatis mendapatkan Rank <strong>Bronze</strong> dan 0 Poin saat pertama kali dibuat. Pastikan email unik dan password minimal 8 karakter.</p>
             </div>
 
         </div>
