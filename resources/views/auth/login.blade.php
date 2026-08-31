@@ -345,13 +345,12 @@
                         <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs text-red-200 ml-1" />
                     </div>
 
-                    {{-- Remember & Forgot --}}
+                    {{-- Remember --}}
                     <div class="flex items-center justify-between text-xs text-white/95 px-1">
                         <label class="flex items-center cursor-pointer hover:text-white transition gap-2 select-none">
                             <input type="checkbox" name="remember" class="rounded bg-white/10 border-white/20 text-[#003da1] focus:ring-0 cursor-pointer w-4 h-4">
                             <span class="font-semibold">Ingat Saya</span>
                         </label>
-                        <a href="{{ route('password.request') }}" class="hover:underline transition font-bold">Lupa Password?</a>
                     </div>
 
                     {{-- Tombol Login --}}
@@ -359,10 +358,6 @@
                         MASUK SEKARANG
                     </button>
 
-                    <div class="text-center mt-8 text-xs text-white/80">
-                        Ada masalah login?
-                        <a href="#" class="text-white hover:underline font-bold ml-1 transition">Hubungi Guru</a>
-                    </div>
                 </form>
             </div>
 
