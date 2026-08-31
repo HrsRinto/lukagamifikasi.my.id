@@ -59,9 +59,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-11 w-11 relative">
-                                                <div class="h-11 w-11 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-600 font-bold border-2 border-white shadow-sm group-hover:from-indigo-200 group-hover:to-purple-200 transition-colors">
-                                                    {{ strtoupper(substr($guru->name, 0, 2)) }}
-                                                </div>
+                                                <img class="h-11 w-11 rounded-full object-cover border-2 border-white shadow-sm group-hover:border-blue-200 transition-colors" src="{{ $guru->photo_url }}" alt="{{ $guru->name }}">
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $guru->name }}</div>

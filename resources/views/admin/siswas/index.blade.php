@@ -60,13 +60,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-11 w-11 relative">
-                                                @if($siswa->profile_photo_path)
-                                                    <img class="h-11 w-11 rounded-full object-cover border-2 border-white shadow-sm group-hover:border-blue-200 transition-colors" src="{{ asset('storage/' . $siswa->profile_photo_path) }}" alt="{{ $siswa->name }}">
-                                                @else
-                                                    <div class="h-11 w-11 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold border-2 border-white shadow-sm group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">
-                                                        {{ strtoupper(substr($siswa->name, 0, 2)) }}
-                                                    </div>
-                                                @endif
+                                                <img class="h-11 w-11 rounded-full object-cover border-2 border-white shadow-sm group-hover:border-blue-200 transition-colors" src="{{ $siswa->photo_url }}" alt="{{ $siswa->name }}">
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{{ $siswa->name }}</div>
