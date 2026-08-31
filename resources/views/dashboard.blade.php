@@ -83,16 +83,25 @@
                     </a>
 
                     {{-- CARD 2: DATA SISWA --}}
+                    @php 
+                        $hasForgotReport = \App\Models\User::where('role', 'siswa')->where('forgot_password_reported', true)->exists(); 
+                    @endphp
                     <a href="{{ route('siswas.index') }}" class="group relative bg-white rounded-3xl shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-green-900/10 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden h-full flex flex-col">
                         {{-- Background Accent --}}
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-50 to-transparent rounded-bl-full opacity-50 group-hover:scale-110 transition-transform"></div>
 
                         <div class="p-8 flex items-center gap-6 relative z-10">
                             {{-- Icon Wrapper --}}
-                            <div class="w-18 h-18 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shadow-inner group-hover:bg-green-600 group-hover:text-white transition-all duration-300 flex-shrink-0">
+                            <div class="w-18 h-18 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shadow-inner group-hover:bg-green-600 group-hover:text-white transition-all duration-300 flex-shrink-0 relative">
                                 <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7zM16 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
+                                @if($hasForgotReport)
+                                    <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="flex-1">

@@ -76,6 +76,7 @@ class SiswaController extends Controller
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
+            $data['forgot_password_reported'] = false;
         }
 
         $siswa->update($data);
@@ -88,6 +89,13 @@ class SiswaController extends Controller
         $siswa = User::findOrFail($id);
         $siswa->delete();
         return redirect()->route('siswas.index')->with('success', 'Siswa berhasil dihapus!');
+    }
+
+    public function clearForgotReport($id)
+    {
+        $siswa = User::findOrFail($id);
+        $siswa->update(['forgot_password_reported' => false]);
+        return redirect()->back()->with('success', 'Laporan lupa password siswa berhasil ditandai selesai.');
     }
 
 

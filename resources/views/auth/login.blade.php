@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Gamifikasi PKBM Terang Mulia</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- Font Google --}}
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Space+Grotesk:wght@400;700&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -361,7 +362,7 @@
 
                     <div class="text-center mt-8 text-xs text-white/80">
                         Ada masalah login?
-                        <a href="#" class="text-white hover:underline font-bold ml-1 transition">Hubungi Guru</a>
+                        <button type="button" onclick="reportForgotPassword()" class="text-white hover:underline font-bold ml-1 transition">Hubungi Guru</button>
                     </div>
                 </form>
             </div>
@@ -681,6 +682,62 @@
                 }
             };
         });
+
+        window.reportForgotPassword = function() {
+            Swal.fire({
+                title: 'Lapor Lupa Password',
+                text: 'Masukkan email sekolah Anda yang terdaftar untuk mengirim pemberitahuan ke Guru:',
+                input: 'email',
+                inputPlaceholder: 'nama@sekolah.com',
+                showCancelButton: true,
+                confirmButtonText: 'Kirim Laporan 🚀',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#003da1',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Email tidak boleh kosong!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading();
+                    fetch("{{ route('password.report') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ email: result.value })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Laporan Terkirim',
+                                text: data.message,
+                                confirmButtonColor: '#003da1'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal Mengirim',
+                                text: data.message,
+                                confirmButtonColor: '#003da1'
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan pada server. Coba beberapa saat lagi.',
+                            confirmButtonColor: '#003da1'
+                        });
+                    });
+                }
+            });
+        };
     </script>
 
 </body>
