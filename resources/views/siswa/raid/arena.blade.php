@@ -393,10 +393,6 @@
                     if (data.hp < currentHP) {
                         let damage = currentHP - data.hp;
                         playHitEffect(damage);
-                        
-                        // Play audio benar
-                        audioBenar.currentTime = 0;
-                        audioBenar.play().catch(e => console.log("Audio play error:", e));
                     }
 
                     // Update local currentHP and totalHP

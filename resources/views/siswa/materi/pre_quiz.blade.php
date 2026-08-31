@@ -149,8 +149,8 @@
                         ⏳
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-tech font-bold text-slate-800 text-xs uppercase tracking-wider">1 Menit / Soal</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed font-medium">Fokus! Jika waktu habis, lanjut otomatis ke soal berikutnya.</p>
+                        <h4 class="font-tech font-bold text-slate-800 text-xs uppercase tracking-wider">Durasi Waktu</h4>
+                        <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed font-medium">Easy: 60s | Med: 55s | Hard: 50s. Jika habis, lanjut otomatis.</p>
                     </div>
                 </div>
 

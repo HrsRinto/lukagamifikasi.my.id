@@ -26,12 +26,7 @@
 
             {{-- Kiri: Tombol Keluar & Judul --}}
             <div class="flex items-center gap-4">
-                {{-- Tombol Keluar Darurat --}}
-                <a href="{{ route('siswa.dashboard') }}" onclick="return confirm('Yakin ingin keluar? Progress akan hilang!')" class="text-gray-400 hover:text-red-500 transition tooltip" title="Keluar Kuis">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                </a>
-
-                <div class="flex flex-col border-l-2 border-gray-200 pl-4">
+                <div class="flex flex-col">
                     <h2 class="font-bold text-lg text-gray-800 leading-tight truncate max-w-xs md:max-w-md">
                         {{ $materi->judul }}
                     </h2>
@@ -130,7 +125,7 @@
     {{-- LOGIKA JS (SAMA SEPERTI SEBELUMNYA, DIPERBARUI UNTUK TAMPILAN BARU) --}}
     <script>
         const questions = @json($soals);
-        const timePerQuestion = 60;
+        let timePerQuestion = 60;
 
         let currentIndex = 0;
         let timerInterval;
@@ -163,10 +158,21 @@
 
         function loadQuestion() {
             clearInterval(timerInterval);
-            timeLeft = timePerQuestion;
             isProcessing = false;
 
             let q = questions[currentIndex];
+
+            // Tentukan durasi berdasarkan difficulty
+            const diff = (q.difficulty || 'easy').toLowerCase();
+            if (diff === 'hard') {
+                timePerQuestion = 50;
+            } else if (diff === 'medium') {
+                timePerQuestion = 55;
+            } else {
+                timePerQuestion = 60;
+            }
+
+            timeLeft = timePerQuestion;
 
             // Update Header
             document.getElementById("question-number").innerText = currentIndex + 1;
@@ -174,7 +180,6 @@
             document.getElementById("question-text").innerText = q.pertanyaan || q.question || q.soal || "Teks soal tidak ditemukan";
 
             const badge = document.getElementById("difficulty-badge");
-            const diff = q.difficulty || 'easy';
             badge.innerText = diff.toUpperCase();
 
             if(diff === 'hard') {
