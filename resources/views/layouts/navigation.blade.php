@@ -402,14 +402,14 @@
                 </div>
 
                 <div class="bg-white pb-8">
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6 text-center relative overflow-hidden">
+                    <div class="bg-blue-600 px-8 py-6 text-center relative overflow-hidden">
                         <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
                         <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-yellow-400/20 rounded-full blur-2xl"></div>
-                        <h2 class="text-3xl font-black text-white flex items-center justify-center gap-3 relative z-10"><span>🐵</span> Teman Belajar Kita</h2>
+                        <h2 class="text-3xl font-black text-white flex items-center justify-center gap-3 relative z-10"><span></span> Teman Belajar Kita</h2>
                         <p class="text-blue-100 text-sm mt-1 font-medium relative z-10">Kenali partner suksesmu dan tingkatan karirmu!</p>
                     </div>
                     <div class="px-6 py-8 sm:px-10 space-y-10">
-                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-1 shadow-md border border-blue-100">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-1 shadow-md border border-blue-100">
                             <div class="bg-white/60 backdrop-blur-sm rounded-[20px] p-6 sm:p-8 flex flex-col md:flex-row items-center gap-8">
                                 <div class="w-full md:w-auto flex justify-center mb-4 md:mb-0 relative">
                                     <div class="absolute inset-0 bg-yellow-400 rounded-full blur-2xl opacity-40 animate-pulse"></div>
@@ -417,7 +417,7 @@
                                 </div>
                                 <div class="text-center md:text-left flex-1">
                                     <div class="inline-block bg-blue-100 text-blue-700 text-[10px] font-black px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Mentor Sukses</div>
-                                    <h3 class="text-2xl font-black text-gray-800 mb-3">Hai, Aku <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">LUKA</span>! 👋</h3>
+                                    <h3 class="text-2xl font-black text-gray-800 mb-3">Hai, Aku <span class="text-blue-600">LUKA</span>! </h3>
                                     <div class="text-sm text-gray-600 leading-relaxed font-medium space-y-3">
                                         <p>Nama lengkapku <span class="text-blue-700 font-bold">Raden Kamandaka (Lutung Kasarung)</span>. "Kalian tahu Raden Kamandaka? Dia itu calon Raja (Sultan), asetnya triliunan. Tapi dia rela hidup susah, menyamar, <span class="text-red-500 font-bold">dan belajar dari bawah."</span></p>
                                         <p class="bg-white/50 p-3 rounded-lg border-l-4 border-yellow-400 italic text-gray-700">"Sekolah adalah fase 'penyamaran' kalian. Mungkin sekarang kalian merasa 'miskin' atau 'buang waktu' dibanding teman yang sudah kerja. Tapi ini adalah fase mengumpulkan <span class="text-orange-500 font-bold">Data & Strategi 📈</span>. Tanpa fase ini, kalian tidak akan pernah matang untuk memimpin kerajaan bisnis kalian nanti 💰."</p>

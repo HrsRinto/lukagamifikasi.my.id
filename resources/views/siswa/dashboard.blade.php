@@ -1,15 +1,15 @@
-<x-app-layout class="bg-gradient-to-br from-blue-600 to-indigo-900">
+<x-app-layout class="bg-blue-600">
     {{-- SCRIPT EKSTERNAL (Canvas Confetti untuk efek meriah) --}}
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     {{-- WRAPPER UTAMA --}}
-    <div class="min-h-screen bg-gradient-to-br from-blue-600 to-indigo-900 font-sans text-gray-100 pb-20 relative overflow-hidden" id="main-wrapper">
+    <div class="min-h-screen bg-blue-600 font-sans text-gray-100 pb-20 relative overflow-hidden" id="main-wrapper">
 
         {{-- DEKORASI BACKGROUND (Fixed & Animated via CSS) --}}
         <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
             <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div class="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+            <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
             {{-- Partikel JS --}}
             <canvas id="particle-canvas" class="absolute inset-0 w-full h-full opacity-30"></canvas>
         </div>
@@ -19,7 +19,6 @@
             {{-- HEADER SECTION --}}
             <div class="pt-12 pb-10 text-center px-4">
                 <h2 class="text-4xl md:text-5xl font-black mb-3 tracking-tight text-white drop-shadow-md flex justify-center items-center gap-2">
-                    <span id="typewriter-text" data-text="Halo, {{ $user->name }}! 👋"></span>
                     {{-- Kursor akan hilang via JS --}}
                 </h2>
                 <p class="text-blue-100 text-lg font-medium opacity-0 animate-fade-in-up" style="animation-delay: 1s; animation-fill-mode: forwards;">Siap Berpetualang dengan LUKA?</p>
@@ -48,7 +47,6 @@
                                 <span class="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md block mb-2">{{ $user->rank_label }}</span>
                                 <div class="inline-flex items-center gap-2 bg-[#0f172a]/60 px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-sm">
                                     <span class="text-[11px] text-gray-300 font-medium">Terus tingkatkan performamu!</span>
-                                    <span class="text-xs">🚀</span>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +201,7 @@
                                         </a>
                                     @elseif($materi->sudah_nonton)
                                         <a href="{{ route('siswa.kuis.pre', $materi->id) }}"
-                                        class="w-full inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/30 transform transition hover:-translate-y-1 hover:shadow-xl active:scale-95">
+                                        class="w-full inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/30 transform transition hover:-translate-y-1 hover:shadow-xl active:scale-95">
                                             <span>Mulai Kuis</span>
                                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                         </a>
@@ -337,7 +335,7 @@
                                             </a>
                                         @elseif($eventStatus === 'finished')
                                             <a href="{{ route('siswa.raid.index') }}"
-                                               class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
+                                               class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95">
                                                 <span>Lihat Hasil Event</span>
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                             </a>
@@ -369,7 +367,7 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('siswa.leaderboard') }}" class="relative z-10 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-indigo-500/30 group active:scale-95">
+                        <a href="{{ route('siswa.leaderboard') }}" class="relative z-10 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-full text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-blue-500/30 group active:scale-95">
                             Buka Rahasia
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                         </a>
@@ -397,12 +395,12 @@
                                                 <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-2xl shadow-inner animate-pulse">🤫</div>
                                                 <div class="flex flex-col gap-1">
                                                     <div class="bg-gray-300 h-5 w-32 rounded animate-pulse"></div>
-                                                    <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded w-fit">Top Secret</span>
+                                                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded w-fit">Top Secret</span>
                                                 </div>
                                             </div>
                                         @else
                                             <div class="relative">
-                                                <div class="w-12 h-12 rounded-full bg-gray-200 p-0.5 {{ $s->id == Auth::id() ? 'bg-gradient-to-br from-blue-400 to-indigo-500' : '' }} overflow-hidden">
+                                                <div class="w-12 h-12 rounded-full bg-gray-200 p-0.5 {{ $s->id == Auth::id() ? 'bg-blue-500' : '' }} overflow-hidden">
                                                     <img src="{{ $s->photo_url }}" class="w-full h-full rounded-full object-cover border-2 border-white" alt="{{ $s->name }}">
                                                 </div>
                                                 <img src="{{ $s->badge_image }}" class="absolute -bottom-1 -right-1 w-5 h-5 drop-shadow-md">
@@ -424,7 +422,7 @@
                                             <div class="bg-gray-200 h-6 w-16 rounded animate-pulse mb-1"></div>
                                             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-wider">???</span>
                                         @else
-                                            <span class="block font-black text-xl sm:text-2xl text-indigo-600">{{ number_format($s->points) }}</span>
+                                            <span class="block font-black text-xl sm:text-2xl text-blue-600">{{ number_format($s->points) }}</span>
                                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Poin</span>
                                         @endif
                                     </div>
@@ -446,8 +444,6 @@
                     <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@stikomyos__</span></a>
                     <span class="text-white/30">•</span>
                     <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@PKBM Terang Mulia</span></a>
-                    <span class="text-white/30">•</span>
-                    <a href="#" class="text-white/60 hover:text-white transition"><span class="text-xs font-bold tracking-widest">@hironimus_rintoo</span></a>
                 </div>
             </div>
 
