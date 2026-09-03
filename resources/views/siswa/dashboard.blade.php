@@ -19,7 +19,7 @@
             {{-- HEADER SECTION --}}
             <div class="pt-12 pb-10 text-center px-4">
                 <h2 class="text-4xl md:text-5xl font-black mb-3 tracking-tight text-white drop-shadow-md flex justify-center items-center gap-2">
-                    {{-- Kursor akan hilang via JS --}}
+                    <span id="typewriter-text" data-text="Halo, {{ $user->name }}! 👋"></span>
                 </h2>
                 <p class="text-blue-100 text-lg font-medium opacity-0 animate-fade-in-up" style="animation-delay: 1s; animation-fill-mode: forwards;">Siap Berpetualang dengan LUKA?</p>
             </div>
@@ -515,26 +515,28 @@
 
             // 1. EFEK KETIK (TYPEWRITER) DI HEADER
             const textElement = document.getElementById('typewriter-text');
-            const textToType = textElement.getAttribute('data-text');
-            textElement.innerText = '';
-            let i = 0;
-            function typeWriter() {
-                if (i < textToType.length) {
-                    textElement.innerHTML += textToType.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50); // Kecepatan ketik
-                } else {
-                    // Tambahkan kursor kedip setelah selesai
-                    textElement.innerHTML += '<span class="text-yellow-400 cursor-blink">|</span>';
+            if (textElement) {
+                const textToType = textElement.getAttribute('data-text');
+                textElement.innerText = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < textToType.length) {
+                        textElement.innerHTML += textToType.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50); // Kecepatan ketik
+                    } else {
+                        // Tambahkan kursor kedip setelah selesai
+                        textElement.innerHTML += '<span class="text-yellow-400 cursor-blink">|</span>';
 
-                    // Hilangkan kursor setelah 2 detik
-                    setTimeout(() => {
-                        const cursor = document.querySelector('.cursor-blink');
-                        if(cursor) cursor.style.display = 'none';
-                    }, 2000);
+                        // Hilangkan kursor setelah 2 detik
+                        setTimeout(() => {
+                            const cursor = document.querySelector('.cursor-blink');
+                            if(cursor) cursor.style.display = 'none';
+                        }, 2000);
+                    }
                 }
+                setTimeout(typeWriter, 500); // Delay awal
             }
-            setTimeout(typeWriter, 500); // Delay awal
 
             // 2. CONFETTI EFFECT (Meledak saat load)
             const duration = 3 * 1000;
